@@ -3,14 +3,16 @@
   "image": "mcr.microsoft.com/devcontainers/python:3.12",
   "features": {
     "ghcr.io/devcontainers/features/aws-cli:1": {},
-    "ghcr.io/devcontainers/features/azure-cli:1": {}
+    "ghcr.io/devcontainers/features/azure-cli:1": {},
+    "ghcr.io/devcontainers/features/terraform:1": {}
   },
-  "postCreateCommand": "pip install prowler scoutsuite --break-system-packages",
+  "postCreateCommand": "pip install prowler scoutsuite c7n --break-system-packages && curl -L -o /usr/local/bin/opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static && chmod +x /usr/local/bin/opa && pip install ansible --break-system-packages",
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-python.python",
-        "hashicorp.terraform"
+        "hashicorp.terraform",
+        "ms-vscode.azure-account"
       ]
     }
   }
