@@ -1,0 +1,89 @@
+[
+  {
+    "description": null,
+    "displayName": "Enforce Environment Tag",
+    "enforcementMode": "Default",
+    "id": "/subscriptions/4db9fc14-989b-40b7-be4d-5bde1c4d991a/providers/Microsoft.Authorization/policyAssignments/enforce-environment-tag",
+    "identity": null,
+    "location": null,
+    "metadata": {
+      "createdBy": "600e9727-dfc5-4b38-a9b7-40ddaba6ff00",
+      "createdOn": "2026-04-07T20:29:01.1530065Z",
+      "updatedBy": null,
+      "updatedOn": null
+    },
+    "name": "enforce-environment-tag",
+    "nonComplianceMessages": null,
+    "notScopes": null,
+    "parameters": null,
+    "policyDefinitionId": "/subscriptions/4db9fc14-989b-40b7-be4d-5bde1c4d991a/providers/Microsoft.Authorization/policyDefinitions/require-environment-tag",
+    "scope": "/subscriptions/4db9fc14-989b-40b7-be4d-5bde1c4d991a",
+    "systemData": {
+      "createdAt": "2026-04-07T20:29:01.113456+00:00",
+      "createdBy": "muhammadhussainzahid5@gmail.com",
+      "createdByType": "User",
+      "lastModifiedAt": "2026-04-07T20:29:01.113456+00:00",
+      "lastModifiedBy": "muhammadhussainzahid5@gmail.com",
+      "lastModifiedByType": "User"
+    },
+    "type": "Microsoft.Authorization/policyAssignments"
+  },
+  {
+    "description": null,
+    "displayName": "Enforce EU Locations Only",
+    "enforcementMode": "Default",
+    "id": "/subscriptions/4db9fc14-989b-40b7-be4d-5bde1c4d991a/providers/Microsoft.Authorization/policyAssignments/enforce-eu-locations",
+    "identity": null,
+    "location": null,
+    "metadata": {
+      "createdBy": "600e9727-dfc5-4b38-a9b7-40ddaba6ff00",
+      "createdOn": "2026-04-07T20:29:11.8262989Z",
+      "updatedBy": null,
+      "updatedOn": null
+    },
+    "name": "enforce-eu-locations",
+    "nonComplianceMessages": null,
+    "notScopes": null,
+    "parameters": null,
+    "policyDefinitionId": "/subscriptions/4db9fc14-989b-40b7-be4d-5bde1c4d991a/providers/Microsoft.Authorization/policyDefinitions/allowed-eu-locations",
+    "scope": "/subscriptions/4db9fc14-989b-40b7-be4d-5bde1c4d991a",
+    "systemData": {
+      "createdAt": "2026-04-07T20:29:11.769896+00:00",
+      "createdBy": "muhammadhussainzahid5@gmail.com",
+      "createdByType": "User",
+      "lastModifiedAt": "2026-04-07T20:29:11.769896+00:00",
+      "lastModifiedBy": "muhammadhussainzahid5@gmail.com",
+      "lastModifiedByType": "User"
+    },
+    "type": "Microsoft.Authorization/policyAssignments"
+  },
+  {
+    "description": null,
+    "displayName": "Enforce HTTPS Storage",
+    "enforcementMode": "Default",
+    "id": "/subscriptions/4db9fc14-989b-40b7-be4d-5bde1c4d991a/providers/Microsoft.Authorization/policyAssignments/enforce-https-storage",
+    "identity": null,
+    "location": null,
+    "metadata": {
+      "createdBy": "600e9727-dfc5-4b38-a9b7-40ddaba6ff00",
+      "createdOn": "2026-04-07T20:29:26.4677455Z",
+      "updatedBy": null,
+      "updatedOn": null
+    },
+    "name": "enforce-https-storage",
+    "nonComplianceMessages": null,
+    "notScopes": null,
+    "parameters": null,
+    "policyDefinitionId": "/subscriptions/4db9fc14-989b-40b7-be4d-5bde1c4d991a/providers/Microsoft.Authorization/policyDefinitions/require-https-storage",
+    "scope": "/subscriptions/4db9fc14-989b-40b7-be4d-5bde1c4d991a",
+    "systemData": {
+      "createdAt": "2026-04-07T20:29:26.427275+00:00",
+      "createdBy": "muhammadhussainzahid5@gmail.com",
+      "createdByType": "User",
+      "lastModifiedAt": "2026-04-07T20:29:26.427275+00:00",
+      "lastModifiedBy": "muhammadhussainzahid5@gmail.com",
+      "lastModifiedByType": "User"
+    },
+    "type": "Microsoft.Authorization/policyAssignments"
+  }
+]
