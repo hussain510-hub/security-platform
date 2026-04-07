@@ -8,5 +8,7 @@
         "hashicorp.terraform"
       ]
     }
-  }
+  },
+  "postCreateCommand": "apt-get update && apt-get install -y curl unzip jq && \
+    pip install --upgrade pip awscli azure-cli"
 }
