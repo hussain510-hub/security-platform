@@ -1,27 +1,37 @@
 import pandas as pd
+import os
 
 # -----------------------------
-# 1️⃣ Load combined Prowler data
+# 1️⃣ Load combined Prowler + custom cloud risks data
 # -----------------------------
-df = pd.read_csv("/workspaces/security-platform/module3-risk/input/prowler_combined.csv")
+input_file = "/workspaces/security-platform/module3-risk/input/prowler_combined.csv"
+if not os.path.exists(input_file):
+    print(f"❌ Input file not found: {input_file}")
+    exit()
 
-# Clean column names
+df = pd.read_csv(input_file)
 df.columns = df.columns.str.strip()
 
 # Filter only failed controls
 df = df[df["STATUS"] == "FAIL"]
-
 print(f"Total FAILED findings: {len(df)}")
 
 # -----------------------------
 # 2️⃣ Control Criticality Mapping
 # -----------------------------
+# Add more cloud services for broader coverage
 control_criticality = {
     "CloudTrail": 0.9,
     "IAM Access Analyzer": 0.85,
     "Config": 0.8,
     "SecurityHub": 0.75,
-    "Billing": 0.4
+    "Billing": 0.4,
+    # Additional critical checks
+    "EC2": 0.95,                  # e.g., public SSH ports
+    "S3": 0.95,                   # e.g., public buckets
+    "NSG": 0.9,                   # Azure network security groups misconfigs
+    "AzureVM": 0.85,
+    "AzureStorage": 0.9
 }
 
 df["Criticality"] = df["REQUIREMENTS_ATTRIBUTES_SERVICE"].map(control_criticality).fillna(0.5)
@@ -34,7 +44,13 @@ impact_map = {
     "IAM Access Analyzer": 12000,
     "Config": 10000,
     "SecurityHub": 9000,
-    "Billing": 3000
+    "Billing": 3000,
+    # Additional cloud services
+    "EC2": 20000,
+    "S3": 18000,
+    "NSG": 15000,
+    "AzureVM": 15000,
+    "AzureStorage": 17000
 }
 
 df["Impact"] = df["REQUIREMENTS_ATTRIBUTES_SERVICE"].map(impact_map).fillna(5000)
@@ -48,11 +64,11 @@ df["Risk Score"] = df["Criticality"] * df["Impact"]
 # 5️⃣ Risk Level Classification
 # -----------------------------
 def risk_level(score):
-    if score > 12000:
+    if score > 15000:
         return "Critical"
-    elif score > 8000:
+    elif score > 10000:
         return "High"
-    elif score > 4000:
+    elif score > 5000:
         return "Medium"
     else:
         return "Low"
@@ -97,19 +113,19 @@ df_final = df[[
 ]]
 
 # Save full report
+os.makedirs("../output", exist_ok=True)
 df_final.to_csv("../output/risk_report.csv", index=False)
 
 # -----------------------------
 # 9️⃣ Top 10 Risks
 # -----------------------------
 top10 = df_final.sort_values(by="Risk Score", ascending=False).head(10)
-top10.to_csv("/workspaces/security-platform/module3-risk/output/top_10_risks.csv", index=False)
+top10.to_csv("../output/top_10_risks.csv", index=False)
 
 # -----------------------------
 # 10️⃣ Total Risk Exposure
 # -----------------------------
 total_risk = df_final["Risk Score"].sum()
-
 print("\n📊 Risk Summary")
 print(f"Total Risk Exposure: ${total_risk}")
 print(f"Top 10 risks saved successfully!")
