@@ -98,18 +98,37 @@ df.rename(columns={
     "REQUIREMENTS_ATTRIBUTES_SERVICE": "Service"
 }, inplace=True)
 
+# ─── FAIR ALE Score (simple version) ───────────────────────
+# FAIR formula: ALE = TEF × Vulnerability × Loss Magnitude
+# TEF = how many times per year this could happen
+# Vulnerability = chance it succeeds (0–1)
+# Loss Magnitude = financial damage if it does
+
+fair_params = {
+    "EC2":          {"tef": 6,   "vuln": 0.85, "loss": 500_000},
+    "S3":           {"tef": 6,   "vuln": 0.85, "loss": 800_000},
+    "NSG":          {"tef": 4,   "vuln": 0.75, "loss": 300_000},
+    "AzureStorage": {"tef": 3,   "vuln": 0.70, "loss": 400_000},
+    "AzureVM":      {"tef": 3,   "vuln": 0.70, "loss": 250_000},
+    "CloudTrail":   {"tef": 2,   "vuln": 0.60, "loss": 150_000},
+    "IAM Access Analyzer": {"tef": 4, "vuln": 0.80, "loss": 350_000},
+    "Config":       {"tef": 2,   "vuln": 0.50, "loss": 100_000},
+    "SecurityHub":  {"tef": 1.5, "vuln": 0.50, "loss":  90_000},
+    "Billing":      {"tef": 1,   "vuln": 0.30, "loss":  30_000},
+}
+
+def calc_fair_ale(service):
+    p = fair_params.get(service, {"tef": 1, "vuln": 0.40, "loss": 50_000})
+    return round(p["tef"] * p["vuln"] * p["loss"], 2)
+
+df["FAIR_ALE_USD"] = df["Service"].apply(calc_fair_ale)
+
 # -----------------------------
 # 8️⃣ Final Output
 # -----------------------------
 df_final = df[[
-    "ACCOUNTID",
-    "REGION",
-    "Service",
-    "Finding",
-    "STATUS",
-    "Risk Score",
-    "Risk Level",
-    "Treatment"
+    "ACCOUNTID", "REGION", "Service", "Finding",
+    "STATUS", "Risk Score", "Risk Level", "Treatment", "FAIR_ALE_USD"
 ]]
 
 # Save full report
