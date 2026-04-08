@@ -1,0 +1,6 @@
+Asset,Type,Criticality,RTO (hrs),RPO (hrs),Revenue/hr (USD),Max Outage (hrs),Financial Exposure,Linked Services,Regulations,Recommendation
+Customer Data Storage (S3),Storage,CRITICAL,1,0.5,50000,24,1200000,S3,"GDPR, PCI-DSS",Activate incident response immediately
+Azure Virtual Machines,Compute,HIGH,4,2,15000,72,1080000,"AzureVM, NSG",ISO27001,Escalate to CISO within 24 hours
+Security Monitoring Platform,Security Tool,MEDIUM,8,4,5000,168,840000,"SecurityHub, IAM Access Analyzer",SOC2,Review in next sprint
+AWS Production Account (eu-north-1),Cloud Account,CRITICAL,2,1,30000,24,720000,"EC2, CloudTrail, Config","SOC2, ISO27001",Activate incident response immediately
+Azure Storage (EU),Storage,HIGH,4,1,10000,72,720000,AzureStorage,GDPR,Escalate to CISO within 24 hours
