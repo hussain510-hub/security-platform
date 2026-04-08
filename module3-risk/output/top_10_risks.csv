@@ -1,0 +1,11 @@
+ACCOUNTID,REGION,Service,Finding,STATUS,Risk Score,Risk Level,Treatment
+334960985321.0,eu-north-1,CloudTrail,This control checks that there is at least one multi-Region CloudTrail trail.,FAIL,13500.0,Critical,Fix Immediately
+334960985321.0,eu-north-1,CloudTrail,Activate as a component of the Organization trail.,FAIL,13500.0,Critical,Fix Immediately
+334960985321.0,eu-north-1,CloudTrail,Activate as a component of the Organization trail.,FAIL,13500.0,Critical,Fix Immediately
+334960985321.0,eu-north-1,CloudTrail,Send critical alert on cloudtrail settings changes,FAIL,13500.0,Critical,Fix Immediately
+334960985321.0,eu-north-1,CloudTrail,Alert on rise ConsoleLoginFailures events,FAIL,13500.0,Critical,Fix Immediately
+334960985321.0,eu-north-1,CloudTrail,Send critical alert on every root user activity,FAIL,13500.0,Critical,Fix Immediately
+334960985321.0,eu-north-1,IAM Access Analyzer,Establish analyzers within every active region.,FAIL,10200.0,High,Fix in 24 hours
+334960985321.0,eu-north-1,Config,Activate continuous recording for the majority of resources.,FAIL,8000.0,Medium,Monitor
+334960985321.0,eu-north-1,Config,Confirm that records are present in central aggregator,FAIL,8000.0,Medium,Monitor
+334960985321.0,eu-north-1,Config,"This control checks whether AWS Config is enabled in the account for the local Region and is recording all resources. The AWS Config service performs configuration management of supported AWS resources in your account and delivers log files to you. The recorded information includes the configuration item (AWS resource), relationships between configuration items, and any configuration changes between resources.",FAIL,8000.0,Medium,Monitor
