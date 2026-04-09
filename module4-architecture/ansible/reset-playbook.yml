@@ -1,0 +1,72 @@
+---
+# ================================================
+# Reset Playbook — Restore insecure defaults
+# Purpose: Demo only — resets server so hardening
+#          playbook can show real changes
+# ================================================
+
+- name: Reset Server to Insecure Defaults
+  hosts: all
+  become: true
+
+  tasks:
+
+  - name: Re-enable root SSH login
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^PermitRootLogin'
+      line: 'PermitRootLogin yes'
+
+  - name: Re-enable password authentication
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^PasswordAuthentication'
+      line: 'PasswordAuthentication yes'
+
+  - name: Remove max auth tries
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^MaxAuthTries'
+      state: absent
+
+  - name: Re-enable X11 forwarding
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^X11Forwarding'
+      line: 'X11Forwarding yes'
+
+  - name: Disable UFW firewall
+    ufw:
+      state: disabled
+    ignore_errors: yes
+
+  - name: Remove audit rules
+    lineinfile:
+      path: /etc/audit/audit.rules
+      regexp: '.*authentication.*'
+      state: absent
+    ignore_errors: yes
+
+  - name: Remove privileged audit rules
+    lineinfile:
+      path: /etc/audit/audit.rules
+      regexp: '.*privileged.*'
+      state: absent
+    ignore_errors: yes
+
+  - name: Reset password maximum age
+    lineinfile:
+      path: /etc/login.defs
+      regexp: '^PASS_MAX_DAYS'
+      line: 'PASS_MAX_DAYS 99999'
+
+  - name: Reset password minimum age
+    lineinfile:
+      path: /etc/login.defs
+      regexp: '^PASS_MIN_DAYS'
+      line: 'PASS_MIN_DAYS 0'
+
+  - name: Reset shadow file permissions
+    file:
+      path: /etc/shadow
+      mode: '0644'
