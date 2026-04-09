@@ -1,0 +1,90 @@
+============================================================
+  MODULE 5 - AZURE IAM ANALYSIS
+  Scanning Azure role assignments for risks
+============================================================
+
+[*] Getting Azure subscription details...
+    Subscription: Azure subscription 1
+    ID: 4db9fc14-989b-40b7-be4d-5bde1c4d991a
+
+[*] Fetching all role assignments...
+    Found 6 role assignments
+
+[*] Fetching all Azure AD users...
+    Found 5 users in Azure AD
+
+============================================================
+  AZURE IAM ANALYSIS REPORT
+============================================================
+
+[!!] CRITICAL FINDINGS (3)
+------------------------------------------------------------
+     User:           muhammadhussainzahid5_gmail.com#EXT#@muhammadhussainzahid5gmail.onmicrosoft.com
+     Role:           Owner
+     Scope:          Entire subscription
+     Issue:          Owner role at subscription level — full control of everything
+     Fix:            Limit Owner role to specific resource groups only
+
+     User:           muhammadhussainzahid5_gmail.com#EXT#@muhammadhussainzahid5gmail.onmicrosoft.com
+     Role:           Owner
+     Scope:          Entire subscription
+     Issue:          Owner role at subscription level — full control of everything
+     Fix:            Limit Owner role to specific resource groups only
+
+     User:           az-admin@muhammadhussainzahid5gmail.onmicrosoft.com
+     Role:           Owner
+     Scope:          Entire subscription
+     Issue:          Owner role at subscription level — full control of everything
+     Fix:            Limit Owner role to specific resource groups only
+
+
+[!]  HIGH RISK FINDINGS (4)
+------------------------------------------------------------
+     User:           muhammadhussainzahid5_gmail.com#EXT#@muhammadhussainzahid5gmail.onmicrosoft.com
+     Role:           Owner
+     Scope:          /subscriptions/4db9fc14-989b-40b7-be4d-5bde1c4d991a
+     Issue:          External guest account has powerful role — should have minimal access
+     Fix:            Remove guest access or limit to Reader role only
+
+     User:           muhammadhussainzahid5_gmail.com#EXT#@muhammadhussainzahid5gmail.onmicrosoft.com
+     Role:           Owner
+     Scope:          /subscriptions/4db9fc14-989b-40b7-be4d-5bde1c4d991a
+     Issue:          External guest account has powerful role — should have minimal access
+     Fix:            Remove guest access or limit to Reader role only
+
+     User:           az-dev-user@muhammadhussainzahid5gmail.onmicrosoft.com
+     Role:           Contributor
+     Scope:          Entire subscription
+     Issue:          Contributor at subscription level — can create/delete anything
+     Fix:            Limit Contributor to specific resource groups only
+
+     User:           az-guest@muhammadhussainzahid5gmail.onmicrosoft.com
+     Role:           Contributor
+     Scope:          Entire subscription
+     Issue:          Contributor at subscription level — can create/delete anything
+     Fix:            Limit Contributor to specific resource groups only
+
+============================================================
+  ALL AZURE USERS SUMMARY
+============================================================
+  Az Admin                  | MEMBER | az-admin@muhammadhussainzahid5gmail.onmicrosoft.com
+  Az Dev User               | MEMBER | az-dev-user@muhammadhussainzahid5gmail.onmicrosoft.com
+  Az Guest                  | MEMBER | az-guest@muhammadhussainzahid5gmail.onmicrosoft.com
+  Az Readonly               | MEMBER | az-readonly@muhammadhussainzahid5gmail.onmicrosoft.com
+  Muhammad Hussain Zahid    | GUEST  | muhammadhussainzahid5_gmail.com#EXT#@muhammadhussainzahid5gmail.onmicrosoft.com
+
+============================================================
+  SUMMARY
+============================================================
+  Total role assignments scanned:  6
+  Critical findings:               3
+  High risk findings:              4
+  Total issues found:              7
+============================================================
+
+  Compliance mapping:
+  ISO27001 A.9.1  — Access control policy
+  ISO27001 A.9.2  — User access management
+  PCI-DSS Req 7   — Restrict access to need-to-know
+  CIS Azure 1.x   — IAM best practices
+============================================================

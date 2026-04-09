@@ -1,0 +1,34 @@
+============================================================
+  MODULE 5 - PRIVILEGE ESCALATION DETECTOR
+  AWS IAM Security Analysis
+============================================================
+
+[*] Fetching all IAM users...
+    Found 9 users: admin-dave, analyst-carol, contractor-eve, dev-alice, dev-bob, hussain, sec-auditor, sec-user, svc-backup
+
+[*] Scanning each user for privilege escalation risks...
+------------------------------------------------------------
+
+============================================================
+  SCAN RESULTS
+============================================================
+
+[!!] USER: admin-dave
+     RISK LEVEL: CRITICAL
+     FINDINGS:
+       - [CRITICAL] Has wildcard (*) permission — instant admin access
+         Policy: AdministratorAccess
+
+[!!] USER: svc-backup
+     RISK LEVEL: CRITICAL
+     FINDINGS:
+       - [CRITICAL] Has 'iam:AttachUserPolicy' — can escalate privileges
+         Policy: svc-backup-policy
+       - [CRITICAL] Has 'iam:CreateAccessKey' — can escalate privileges
+         Policy: svc-backup-policy
+       - [CRITICAL] Has 'iam:CreateUser' — can escalate privileges
+         Policy: svc-backup-policy
+
+============================================================
+  SUMMARY: 2 user(s) with escalation risks found
+============================================================

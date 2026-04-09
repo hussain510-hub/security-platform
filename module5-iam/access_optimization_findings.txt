@@ -1,0 +1,60 @@
+============================================================
+  MODULE 5 - ACCESS OPTIMIZATION ANALYSIS
+  Finding over-privileged and inactive users
+============================================================
+
+[*] Reading credential report...
+    Loaded 10 accounts from report
+[*] Checking user policy assignments...
+
+============================================================
+  ACCESS OPTIMIZATION REPORT
+============================================================
+
+[!] FINDING 1: Users with NO MFA enabled (9 users)
+    Risk: If password is stolen, account is fully compromised
+    Standard: ISO27001 A.9.4, CIS AWS 1.10
+    - admin-dave           | Policies: AdministratorAccess
+    - analyst-carol        | Policies: ReadOnlyAccess
+    - contractor-eve       | Policies: AmazonEC2ReadOnlyAccess
+    - dev-alice            | Policies: AmazonEC2FullAccess, AmazonS3FullAccess
+    - dev-bob              | Policies: AmazonEC2FullAccess
+    - hussain              | Policies: no policies
+    - sec-auditor          | Policies: SecurityAudit
+    - sec-user             | Policies: ViewOnlyAccess, SecurityAudit
+    - svc-backup           | Policies: svc-backup-policy
+
+[!] FINDING 2: Ghost accounts — never logged in (7 users)
+    Risk: Unnecessary accounts increase attack surface
+    Recommendation: Disable or delete these accounts
+    - admin-dave           | Policies: AdministratorAccess
+    - analyst-carol        | Policies: ReadOnlyAccess
+    - contractor-eve       | Policies: AmazonEC2ReadOnlyAccess
+    - dev-alice            | Policies: AmazonEC2FullAccess, AmazonS3FullAccess
+    - dev-bob              | Policies: AmazonEC2FullAccess
+    - sec-auditor          | Policies: SecurityAudit
+    - svc-backup           | Policies: svc-backup-policy
+
+[!] FINDING 3: Inactive access keys (0 users)
+    Risk: Old unused keys are a common breach entry point
+    Recommendation: Rotate or deactivate keys unused for 30+ days
+
+[!] FINDING 4: User permission assignments
+    Recommendation: Apply least-privilege — only give what is needed
+    - admin-dave           | AdministratorAccess
+    - analyst-carol        | ReadOnlyAccess
+    - contractor-eve       | AmazonEC2ReadOnlyAccess
+    - dev-alice            | AmazonEC2FullAccess, AmazonS3FullAccess
+    - dev-bob              | AmazonEC2FullAccess
+    - sec-auditor          | SecurityAudit
+    - sec-user             | ViewOnlyAccess, SecurityAudit
+    - svc-backup           | svc-backup-policy
+
+============================================================
+  SUMMARY
+============================================================
+  Users with no MFA:        9
+  Ghost accounts:           7
+  Inactive access keys:     0
+  Total issues found:       16
+============================================================

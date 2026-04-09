@@ -1,0 +1,203 @@
+=================================================================
+  MODULE 5 - IAM GOVERNANCE REPORT
+  Multi-Cloud Identity & Access Management Audit
+  Generated: 2026-04-09 06:05 UTC
+=================================================================
+
+EXECUTIVE SUMMARY
+-----------------
+This report presents findings from an automated IAM governance
+audit conducted across AWS and Microsoft Azure cloud environments.
+The audit identified critical privilege escalation paths, ghost
+accounts, missing MFA controls, and overprivileged role assignments.
+
+Total findings require immediate remediation to meet ISO27001,
+PCI-DSS, and CIS benchmark requirements.
+
+=================================================================
+  PART 1: AWS IAM FINDINGS
+=================================================================
+
+[CRITICAL] FINDING 1: Privilege Escalation Paths Detected
+----------------------------------------------------------
+Tool:     Custom Python privilege escalation detector
+Standard: CIS AWS 1.16, ISO27001 A.9.2, PCI-DSS Req 7
+
+Two users were found with critical privilege escalation risks:
+
+1. admin-dave
+   - Policy:  AdministratorAccess
+   - Risk:    Has wildcard (*) permission — instant admin access
+   - Impact:  Full control of entire AWS account
+   - Fix:     Replace with specific role-based policies
+              Enable MFA immediately
+              Review if full admin access is truly required
+
+2. svc-backup
+   - Policy:  svc-backup-policy (custom)
+   - Risk:    Has iam:AttachUserPolicy — can attach AdminAccess to itself
+              Has iam:CreateAccessKey — can create keys for any user
+              Has iam:CreateUser — can create hidden admin accounts
+   - Impact:  Complete account takeover via privilege escalation
+   - Fix:     Remove all IAM permissions from backup service account
+              Limit to S3 read/write for backup purposes only
+              Apply principle of least privilege
+
+
+[HIGH] FINDING 2: MFA Not Enabled on Any User Account
+------------------------------------------------------
+Tool:     AWS Credential Report Analysis
+Standard: CIS AWS 1.10, ISO27001 A.9.4, PCI-DSS Req 8.3
+
+9 out of 9 IAM users have MFA disabled including admin-dave
+who has full AdministratorAccess to the entire AWS account.
+
+Users without MFA:
+  - admin-dave      (AdministratorAccess)    CRITICAL
+  - svc-backup      (custom escalation policy) CRITICAL
+  - dev-alice       (EC2 + S3 Full Access)   HIGH
+  - dev-bob         (EC2 Full Access)        HIGH
+  - hussain         (no policies, has key)   HIGH
+  - sec-user        (ViewOnly + Audit)       MEDIUM
+  - contractor-eve  (EC2 ReadOnly)           MEDIUM
+  - analyst-carol   (ReadOnly)               LOW
+  - sec-auditor     (SecurityAudit)          LOW
+
+Fix: Enable MFA for ALL users especially admin-dave immediately
+     Use virtual MFA (Google Authenticator) or hardware token
+
+
+[HIGH] FINDING 3: Ghost Accounts — Never Used
+---------------------------------------------
+Tool:     Access Optimization Analysis
+Standard: ISO27001 A.9.2.5, CIS AWS 1.12
+
+7 users have never logged into the AWS console.
+These dormant accounts increase the attack surface unnecessarily.
+
+Ghost accounts found:
+  - admin-dave      — Has AdministratorAccess but NEVER logged in
+  - svc-backup      — Has dangerous permissions but NEVER used
+  - dev-alice       — Has EC2+S3 access but NEVER logged in
+  - dev-bob         — Has EC2 access but NEVER logged in
+  - contractor-eve  — Contractor account, NEVER logged in
+  - analyst-carol   — Has ReadOnly access, NEVER logged in
+  - sec-auditor     — Has SecurityAudit access, NEVER logged in
+
+Fix: Disable accounts unused for 30+ days
+     Delete contractor accounts when contract ends
+     Implement quarterly access reviews
+
+=================================================================
+  PART 2: AZURE IAM FINDINGS
+=================================================================
+
+[CRITICAL] FINDING 4: Owner Role at Subscription Level
+-------------------------------------------------------
+Tool:     Azure IAM Analysis Script
+Standard: CIS Azure 1.23, ISO27001 A.9.2, PCI-DSS Req 7
+
+3 Owner role assignments found at subscription level.
+Owner is the most powerful Azure role — grants complete control
+over all resources, costs, and access management.
+
+Critical assignments:
+  - muhammadhussainzahid5 (x2) — External/guest account with Owner
+  - az-admin               — Test admin with Owner at subscription level
+
+Fix: Apply Owner role at resource group level only
+     Use just-in-time (JIT) access for admin operations
+     Implement Privileged Identity Management (PIM)
+
+
+[HIGH] FINDING 5: Overprivileged Role Assignments
+--------------------------------------------------
+Tool:     Azure IAM Analysis Script
+Standard: ISO27001 A.9.1, PCI-DSS Req 7.1
+
+4 high risk role assignments found:
+
+  - az-dev-user  | Contributor at subscription level
+    Fix: Move to Contributor on dev resource group only
+
+  - az-guest     | Contributor at subscription level
+    Fix: Guest accounts should have Reader role maximum
+         Remove Contributor access immediately
+
+  - muhammadhussainzahid5 (x2) | External account with Owner
+    Fix: Convert to internal account or limit to Reader
+
+=================================================================
+  RISK SCORE SUMMARY
+=================================================================
+
+  Finding                          Cloud   Risk      Score
+  -------                          -----   ----      -----
+  Privilege escalation (svc-backup) AWS    CRITICAL   10/10
+  Wildcard admin (admin-dave)       AWS    CRITICAL   10/10
+  Owner at subscription level       Azure  CRITICAL    9/10
+  No MFA on any account             AWS    HIGH        8/10
+  Guest with Contributor role       Azure  HIGH        7/10
+  Ghost accounts (7 users)          AWS    HIGH        7/10
+  Dev Contributor subscription      Azure  MEDIUM      5/10
+  Inactive accounts                 Both   MEDIUM      5/10
+
+=================================================================
+  COMPLIANCE MAPPING
+=================================================================
+
+  Standard        Control         Finding
+  --------        -------         -------
+  ISO27001        A.9.1.1         Overprivileged roles (AWS + Azure)
+  ISO27001        A.9.2.1         Ghost accounts never reviewed
+  ISO27001        A.9.2.5         No access review process in place
+  ISO27001        A.9.4.2         MFA not enabled on any account
+  PCI-DSS         Req 7.1         Access not limited to need-to-know
+  PCI-DSS         Req 8.3         MFA not enforced for admin access
+  CIS AWS         1.10            MFA not enabled for console users
+  CIS AWS         1.12            Inactive credentials not removed
+  CIS AWS         1.16            Admin privileges not restricted
+  CIS Azure       1.23            Owner role too broadly assigned
+  NIST CSF        PR.AC-1         Identity management gaps identified
+  NIST CSF        PR.AC-4         Access permissions not minimized
+
+=================================================================
+  REMEDIATION PLAN
+=================================================================
+
+  Priority 1 — Do Immediately (Critical):
+  ----------------------------------------
+  1. Enable MFA on admin-dave and svc-backup
+  2. Remove iam:AttachUserPolicy from svc-backup
+  3. Remove Owner role from az-guest account
+  4. Review duplicate Owner assignments in Azure
+
+  Priority 2 — Do This Week (High):
+  -----------------------------------
+  5. Enable MFA on ALL remaining IAM users
+  6. Disable ghost accounts unused for 30+ days
+  7. Move az-dev-user to resource group level access
+  8. Implement quarterly access review process
+
+  Priority 3 — Do This Month (Medium):
+  --------------------------------------
+  9.  Replace AdministratorAccess with specific roles
+  10. Implement AWS IAM Access Analyzer
+  11. Enable Azure Privileged Identity Management (PIM)
+  12. Set up automated IAM compliance monitoring
+
+=================================================================
+  OVERALL IAM SECURITY SCORE
+=================================================================
+
+  AWS IAM Score:          32 / 100   [CRITICAL]
+  Azure IAM Score:        41 / 100   [HIGH RISK]
+  Combined IAM Score:     36 / 100   [CRITICAL]
+
+  Immediate action required before this environment
+  can be considered compliant with ISO27001 or PCI-DSS.
+
+=================================================================
+  END OF IAM GOVERNANCE REPORT
+  Generated: 2026-04-09 06:05 UTC
+=================================================================
