@@ -1,0 +1,97 @@
+ACCOUNTID,REGION,Service,Finding,STATUS,Risk Score,Risk Level,Treatment,FAIR_ALE_USD
+334960985321.0,eu-north-1,,Ensure that IAM External Access Analyzer is enabled for all regions,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure CloudTrail is enabled in all regions,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure Network Access Control List (NACL) changes are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure changes to network gateways are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure route table changes are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure VPC changes are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure AWS Config configuration changes are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure CloudTrail configuration changes are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure AWS Management Console authentication failures are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure AWS Organizations changes are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure disabling or scheduled deletion of customer created CMKs is monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure S3 bucket policy changes are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM policy changes are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure usage of the 'root' account is monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure security group changes are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure management console sign-in without MFA is monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure unauthorized API calls are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure AWS Config is enabled in all regions,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure EBS volume encryption is enabled in all regions,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM instance roles are used for AWS resource access from instances,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure no Network ACLs allow ingress from 0.0.0.0/0 to remote server administration ports,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure no Network ACLs allow ingress from 0.0.0.0/0 to remote server administration ports,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure no Network ACLs allow ingress from 0.0.0.0/0 to remote server administration ports,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure no security groups allow ingress from 0.0.0.0/0 to remote server administration ports,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure no security groups allow ingress from ::/0 to remote server administration ports,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Eliminate use of the 'root' user for administrative and daily tasks,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM policies that allow full *:* administrative privileges are not attached,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM users are managed centrally via identity federation or AWS Organizations for multi-account environments,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM password policy requires minimum length of 14 or greater,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM password policy prevents password reuse,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM users receive permissions only through groups,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM users receive permissions only through groups,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure hardware MFA is enabled for the 'root' user account,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure a support role has been created to manage incidents with AWS Support,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure credentials unused for 45 days or more are disabled,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure multi-factor authentication (MFA) is enabled for all IAM users that have a console password,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure AWS Security Hub is enabled,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure VPC flow logging is enabled in all VPCs,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure that IAM Access Analyzer is enabled for all regions,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure CloudTrail is enabled in all regions,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure Network Access Control List (NACL) changes are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure changes to network gateways are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure route table changes are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure VPC changes are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure AWS Config configuration changes are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure CloudTrail configuration changes are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure AWS Management Console authentication failures are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure AWS Organizations changes are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure disabling or scheduled deletion of customer created CMKs is monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure S3 bucket policy changes are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM policy changes are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure usage of the root account is monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure security group changes are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure management console sign-in without MFA is monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure unauthorized API calls are monitored,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure AWS Config is enabled in all regions,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure EBS volume encryption is enabled in all regions,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure that ec2 common ports from instances are not internet-exposed,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM instance roles are used for AWS resource access from instances,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure no Network ACLs allow ingress from 0.0.0.0/0 to remote server administration ports,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure no Network ACLs allow ingress from 0.0.0.0/0 to remote server administration ports,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure no Network ACLs allow ingress from 0.0.0.0/0 to remote server administration ports,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure no security groups allow ingress from 0.0.0.0/0 to remote server administration ports,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure that ec2 security groups do not allow ingress from internet to common ports,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Avoid the use of the 'root' account,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM policies that allow full *:* administrative privileges are not attached,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM users are managed centrally via identity federation or AWS Organizations for multi-account environments,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM password policy expires passwords within 90 days or less,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM password policy require at least one lowercase letter,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM password policy requires minimum length of 14 or greater,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM password policy require at least one number,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM password policy prevents password reuse,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM password policy require at least one symbol,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM password policy requires at least one uppercase letter,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM policies are attached only to groups or roles,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM users receive permissions only through groups,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM policies are attached only to groups or roles,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure IAM users receive permissions only through groups,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure hardware MFA is enabled for the 'root' user account,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure a support role has been created to manage incidents with AWS Support,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure credentials unused for 45 days or more are disabled,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure multi-factor authentication (MFA) is enabled for all IAM users that have console access,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure AWS Security Hub is enabled,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure VPC flow logging is enabled in all VPCs,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure that IAM Access analyzer is enabled for all regions,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure CloudTrail is enabled in all regions,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure a log metric filter and alarm exist for changes to Network Access Control Lists (NACL),FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure a log metric filter and alarm exist for changes to network gateways,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure a log metric filter and alarm exist for route table changes,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure a log metric filter and alarm exist for VPC changes,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure a log metric filter and alarm exist for AWS Config configuration changes,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure a log metric filter and alarm exist for CloudTrail configuration changes,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure a log metric filter and alarm exist for AWS Management Console authentication failures,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure a log metric filter and alarm exists for AWS Organizations changes,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure a log metric filter and alarm exist for disabling or scheduled deletion of customer created CMKs,FAIL,2500.0,Low,Accept,20000.0
+334960985321.0,eu-north-1,,Ensure a log metric filter and alarm exist for S3 bucket policy changes,FAIL,2500.0,Low,Accept,20
