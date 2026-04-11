@@ -1,6 +1,0 @@
-ACCOUNTID,REGION,Service,Finding,STATUS,Risk Score,Risk Level,Treatment,FAIR_ALE_USD
-334960985321.0,eu-north-1,S3,Protection using S3,FAIL,17100.0,Critical,Fix Immediately,4080000.0
-334960985321.0,eu-north-1,GuardDuty,Protection for RDS instances,FAIL,2500.0,Low,Accept,20000.0
-334960985321.0,eu-north-1,EC2,Enable and set up AWS Inspector.,FAIL,19000.0,Critical,Fix Immediately,2550000.0
-334960985321.0,eu-north-1,GuardDuty,Detection of Threats in your AWS environment,FAIL,2500.0,Low,Accept,20000.0
-334960985321.0,eu-north-1,SecurityServices,Check if security services are enabled,FAIL,2500.0,Low,Accept,20000.0

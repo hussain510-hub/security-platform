@@ -1,6 +1,0 @@
-ACCOUNTID,REGION,Service,Finding,STATUS,Risk Score,Risk Level,Treatment,FAIR_ALE_USD
-334960985321.0,eu-north-1,EC2,This control checks whether account-level encryption is enabled by default for Amazon Elastic Block Store(Amazon EBS). The control fails if the account level encryption is not enabled.,FAIL,19000.0,Critical,Fix Immediately,2550000.0
-334960985321.0,eu-north-1,EC2,This control checks whether a service endpoint for Amazon EC2 is created for each VPC. The control fails if a VPC does not have a VPC endpoint created for the Amazon EC2 service.,FAIL,19000.0,Critical,Fix Immediately,2550000.0
-334960985321.0,eu-north-1,EC2,This control checks whether the assignment of public IPs in Amazon Virtual Private Cloud (Amazon VPC) subnets have MapPublicIpOnLaunch set to FALSE. The control passes if the flag is set to FALSE.,FAIL,19000.0,Critical,Fix Immediately,2550000.0
-334960985321.0,eu-north-1,S3,Protection using S3,FAIL,17100.0,Critical,Fix Immediately,4080000.0
-334960985321.0,eu-north-1,EC2,Enable and set up AWS Inspector.,FAIL,19000.0,Critical,Fix Immediately,2550000.0
