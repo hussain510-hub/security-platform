@@ -13,22 +13,8 @@
   SCAN RESULTS
 ============================================================
 
-[!!] USER: admin-dave
-     RISK LEVEL: CRITICAL
-     FINDINGS:
-       - [CRITICAL] Has wildcard (*) permission — instant admin access
-         Policy: AdministratorAccess
-
-[!!] USER: svc-backup
-     RISK LEVEL: CRITICAL
-     FINDINGS:
-       - [CRITICAL] Has 'iam:AttachUserPolicy' — can escalate privileges
-         Policy: svc-backup-policy
-       - [CRITICAL] Has 'iam:CreateAccessKey' — can escalate privileges
-         Policy: svc-backup-policy
-       - [CRITICAL] Has 'iam:CreateUser' — can escalate privileges
-         Policy: svc-backup-policy
+[OK] No privilege escalation risks found.
 
 ============================================================
-  SUMMARY: 2 user(s) with escalation risks found
+  SUMMARY: 0 user(s) with escalation risks found
 ============================================================

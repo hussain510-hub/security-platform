@@ -1,0 +1,76 @@
+============================================================
+  MODULE 5 - PRIVILEGE ESCALATION DETECTOR
+  AWS IAM Security Analysis
+============================================================
+
+[*] Fetching all IAM users...
+    Found 9 users: admin-dave, analyst-carol, contractor-eve, dev-alice, dev-bob, hussain, sec-auditor, sec-user, svc-backup
+
+[*] Scanning each user for privilege escalation risks...
+------------------------------------------------------------
+
+============================================================
+  SCAN RESULTS
+============================================================
+
+[!!] USER: admin-dave
+     RISK LEVEL: CRITICAL
+     FINDINGS:
+       - [CRITICAL] Has wildcard (*) permission — instant admin access
+         Policy: AdministratorAccess
+
+[!!] USER: svc-backup
+     RISK LEVEL: CRITICAL
+     FINDINGS:
+       - [CRITICAL] Has 'iam:AttachUserPolicy' — can escalate privileges
+         Policy: svc-backup-policy
+       - [CRITICAL] Has 'iam:CreateAccessKey' — can escalate privileges
+         Policy: svc-backup-policy
+       - [CRITICAL] Has 'iam:CreateUser' — can escalate privileges
+         Policy: svc-backup-policy
+
+============================================================
+  SUMMARY: 2 user(s) with escalation risks found
+============================================================
+
+============================================================
+  AUTO-REMEDIATION STARTING...
+============================================================
+
+[FIX] Remediating: admin-dave
+      Detaching : AdministratorAccess
+      ✅ Detached : AdministratorAccess removed from admin-dave
+      Attaching  : ReadOnlyAccess (safe replacement)
+      ✅ Replaced : ReadOnlyAccess now attached to admin-dave
+
+[FIX] Remediating: svc-backup
+      Detaching : svc-backup-policy
+      ✅ Detached : svc-backup-policy removed from svc-backup
+      Attaching  : ReadOnlyAccess (safe replacement)
+      ✅ Replaced : ReadOnlyAccess now attached to svc-backup
+
+[FIX] Deleting inline policy on svc-backup
+      ℹ️  Skipped  : aws: [ERROR]: An error occurred (NoSuchEntity) when calling the DeleteUserPolicy operation: The user policy with name svc-backup-policy cannot be found.
+
+Additional error details:
+Type: Sender
+
+============================================================
+  REMEDIATION COMPLETE
+============================================================
+  Fixed 2 user(s)
+
+  What was done:
+  • admin-dave -> risky policy detached, ReadOnlyAccess applied
+  • svc-backup -> risky policy detached, ReadOnlyAccess applied
+  • svc-backup -> svc-backup-policy deleted (inline)
+
+  Compliance covered:
+  • CIS AWS 1.16     — Least privilege enforced
+  • ISO27001 A.9.2.3 — Privileged access managed
+  • PCI-DSS Req 7.1  — Access limited to need
+============================================================
+
+  [*] Run privilege_escalation_detector.py again
+      to confirm 0 CRITICAL users remain.
+============================================================
