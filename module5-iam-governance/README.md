@@ -1,199 +1,80 @@
 # Module 5 — IAM Governance
 
-> **AWS IAM Analysis · Privilege Escalation Detection · Azure IAM · Access Optimization**
-> **Status:** ✅ Complete | **Clouds:** AWS (us-east-1) + Azure | **Tools:** AWS CLI, Azure CLI, Python
+> **AWS IAM Analysis · Privilege Escalation Detection · Azure IAM Analysis · Governance Report**  
+> AWS (us-east-1) + Microsoft Azure
 
----
-
-## Table of Contents
-- [What This Module Does](#what-this-module-does)
-- [Architecture Diagram](#architecture-diagram)
-- [IAM Risk Landscape](#iam-risk-landscape)
-- [Test Environment Setup](#test-environment-setup)
-- [Pipeline Overview](#pipeline-overview)
-- [Folder Structure](#folder-structure)
-- [Script 1 — AWS Credential Report](#script-1--aws-credential-report)
-- [Script 2 — privilege_escalation_detector.py](#script-2--privilege_escalation_detectorpy)
-- [Script 3 — access_optimization.py](#script-3--access_optimizationpy)
-- [Script 4 — azure_iam_analysis.py](#script-4--azure_iam_analysispy)
-- [Script 5 — iam_governance_report.py](#script-5--iam_governance_reportpy)
-- [Key Findings Summary](#key-findings-summary)
-- [How This Feeds the Next Module](#how-this-feeds-the-next-module)
+**Status:** ✅ Complete  
+**Tools:** AWS CLI · Azure CLI · Python (custom scripts)  
+**Key Finding:** Overall IAM Security Score — **36/100 (Critical)**
 
 ---
 
 ## What This Module Does
 
-Modules 1–4 focused on the infrastructure and code side of security. Module 5 focuses on the **human side**:
+Module 5 focuses on the **people side** of cloud security:
 
-```
-The core question Module 5 answers:
-"Who has access to what — and should they REALLY have it?"
-```
+> *"Who has access to what — and should they really have it?"*
 
-Bad IAM (Identity and Access Management) is one of the **leading causes** of real-world cloud breaches. Over-privileged users, inactive accounts, missing MFA, and privilege escalation paths are all exploited by attackers. This module finds all of them automatically.
+IAM (Identity and Access Management) controls who can log into cloud accounts and what they can do inside them. Bad IAM is one of the leading causes of real-world cloud breaches.
+
+Module 5 has four jobs:
+
+1. Analyse every AWS IAM user — permissions, MFA status, last login
+2. Detect privilege escalation paths — users who can secretly give themselves admin access
+3. Find over-provisioned and inactive accounts that increase the attack surface
+4. Analyse Azure role assignments and find overprivileged users
 
 ---
 
-## Architecture Diagram
+## Architecture
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│                     MODULE 5 — IAM GOVERNANCE                        │
+│                    MODULE 5 ARCHITECTURE                             │
+│                                                                      │
+│   AWS Account                        Azure Subscription             │
+│   ┌───────────────────────┐          ┌───────────────────────┐      │
+│   │  IAM Users (9 total)  │          │  Role Assignments (6) │      │
+│   │  ├── admin-dave        │          │  ├── Owner (x3)        │      │
+│   │  ├── svc-backup        │          │  ├── Contributor (x2)  │      │
+│   │  ├── dev-alice          │          │  └── Reader (x1)       │      │
+│   │  └── 6 test users      │          └──────────┬────────────┘      │
+│   └────────────┬──────────┘                     │                   │
+│                │                                 │                   │
+│                ▼                                 ▼                   │
+│   ┌──────────────────────────────────────────────────────────┐      │
+│   │                    ANALYSIS LAYER                        │      │
+│   │                                                          │      │
+│   │  Step 1: AWS Credential Report                           │      │
+│   │  aws iam generate-credential-report                      │      │
+│   │              │                                           │      │
+│   │              ▼                                           │      │
+│   │  Step 2: privilege_escalation_detector.py                │      │
+│   │  • Reads every IAM user's policies                       │      │
+│   │  • Checks for dangerous permissions:                     │      │
+│   │    iam:AttachUserPolicy, iam:CreateUser, wildcard *      │      │
+│   │  • Finds 2 CRITICAL users                                │      │
+│   │              │                                           │      │
+│   │              ▼                                           │      │
+│   │  Step 3: access_optimization.py                          │      │
+│   │  • Checks MFA status for all users                       │      │
+│   │  • Identifies ghost accounts (never logged in)           │      │
+│   │  • Detects unused access keys                            │      │
+│   │  • Finds 16 total issues                                 │      │
+│   │              │                                           │      │
+│   │              ▼                                           │      │
+│   │  Step 4: azure_iam_analysis.py                           │      │
+│   │  • Lists all role assignments across subscription        │      │
+│   │  • Flags Owner/Contributor at subscription level         │      │
+│   │  • Finds 7 total issues (3 critical, 4 high)             │      │
+│   │              │                                           │      │
+│   │              ▼                                           │      │
+│   │  Step 5: iam_governance_report.py                        │      │
+│   │  • Combines all findings into one professional report    │      │
+│   │  • Maps every finding to ISO27001 / PCI-DSS / CIS / NIST│      │
+│   │  • Gives overall score: AWS 32/100, Azure 41/100         │      │
+│   └──────────────────────────────────────────────────────────┘      │
 └──────────────────────────────────────────────────────────────────────┘
-
-    ┌───────────────────────────┐    ┌──────────────────────────────┐
-    │        AWS Account        │    │         Azure Account        │
-    │        us-east-1          │    │                              │
-    │                           │    │  Subscription Level          │
-    │  IAM Users: 7 (test env)  │    │  Role Assignments            │
-    │  Policies: Custom+AWS     │    │  Owner/Contributor roles     │
-    └────────────┬──────────────┘    └──────────────┬───────────────┘
-                 │                                  │
-                 ▼                                  ▼
-    ┌────────────────────────┐      ┌───────────────────────────────┐
-    │  STEP 1                │      │  STEP 4                       │
-    │  aws iam               │      │  azure_iam_analysis.py        │
-    │  generate-credential   │      │                               │
-    │  -report               │      │  • List all role assignments  │
-    │                        │      │  • Find Owner-level users     │
-    │  credential_report.csv │      │  • Flag overprivileged roles  │
-    └────────────┬───────────┘      └──────────────┬────────────────┘
-                 │                                  │
-                 ▼                                  │
-    ┌────────────────────────┐                      │
-    │  STEP 2                │                      │
-    │  privilege_escalation  │                      │
-    │  _detector.py          │                      │
-    │                        │                      │
-    │  Scans all IAM policies│                      │
-    │  for dangerous actions:│                      │
-    │  • iam:AttachUserPolicy│                      │
-    │  • iam:CreateUser      │                      │
-    │  • iam:CreateAccessKey │                      │
-    │  • wildcard * on IAM   │                      │
-    │                        │                      │
-    │  escalation_findings   │                      │
-    │  .txt (2 CRITICAL)     │                      │
-    └────────────┬───────────┘                      │
-                 │                                  │
-                 ▼                                  │
-    ┌────────────────────────┐                      │
-    │  STEP 3                │                      │
-    │  access_optimization   │                      │
-    │  .py                   │                      │
-    │                        │                      │
-    │  • Ghost accounts      │                      │
-    │  • No-MFA users        │                      │
-    │  • Inactive access keys│                      │
-    │  • Over-privileged     │                      │
-    │                        │                      │
-    │  16 issues found       │                      │
-    └────────────┬───────────┘                      │
-                 │                                  │
-                 └───────────────┬──────────────────┘
-                                 │
-                                 ▼
-                    ┌────────────────────────┐
-                    │  STEP 5                │
-                    │  iam_governance_report │
-                    │  .py                   │
-                    │                        │
-                    │  Combines ALL findings │
-                    │  Maps to standards:    │
-                    │  ISO27001, PCI-DSS,    │
-                    │  CIS, NIST             │
-                    │                        │
-                    │  iam_governance_report │
-                    │  .txt                  │
-                    └───────────┬────────────┘
-                                │
-                                ▼
-                       ┌────────────────┐
-                       │   MODULE 6     │
-                       │   Dashboard    │
-                       │   IAM Section  │
-                       └────────────────┘
-```
-
----
-
-## IAM Risk Landscape
-
-```
-┌──────────────────────────────────────────────────────────────────────┐
-│                   IAM ATTACK SURFACE MAP                             │
-│                                                                      │
-│   HIGH RISK                    MEDIUM RISK            LOW RISK       │
-│   ─────────                    ───────────            ────────       │
-│                                                                      │
-│   Privilege Escalation    →    Over-privileged   →   Inactive        │
-│   Paths                        Accounts               Accounts       │
-│                                                                      │
-│   "User can attach          "Full admin for      "Old contractor     │
-│    any policy to            a read-only job"      account still      │
-│    themselves"                                    exists"            │
-│                                                                      │
-│   Missing MFA on          →    No Key Rotation   →   No Logging      │
-│   Admin Users                                                        │
-│                                                                      │
-│   "Admin logs in            "90-day-old keys     "No trail of        │
-│    with just a              are a breach          who did what"      │
-│    password"                 waiting to happen"                      │
-│                                                                      │
-│   ◄── Module 5 detects ALL of these automatically ──────────────►   │
-└──────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## Test Environment Setup
-
-Since the AWS account only had 2 real users, a realistic test environment was created to demonstrate the scripts meaningfully.
-
-### AWS Test Users Created
-
-| Username | Permissions | Purpose | Risk Level |
-|----------|-------------|---------|------------|
-| `admin-dave` | `AdministratorAccess` (full admin) | Overprivileged admin with wildcard `*` | 🔴 CRITICAL |
-| `dev-alice` | `EC2FullAccess` + `S3FullAccess`, no MFA | Broad access, MFA missing | 🟠 HIGH |
-| `dev-bob` | `EC2FullAccess` | Developer, never logged in | 🟠 HIGH |
-| `analyst-carol` | `ReadOnlyAccess` | Well-scoped read-only | 🟢 LOW |
-| `svc-backup` | Custom `svc-backup-policy` | **Privilege escalation path** | 🔴 CRITICAL |
-| `contractor-eve` | `EC2ReadOnlyAccess` | Ghost contractor account | 🟡 MEDIUM |
-| `sec-auditor` | `SecurityAudit` | Scoped audit-only access | 🟢 LOW |
-
-### The Dangerous Policy — svc-backup-policy
-
-The most important demo piece — a custom policy that simulates a **real-world privilege escalation** mistake:
-
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [{
-    "Effect": "Allow",
-    "Action": [
-      "iam:AttachUserPolicy",   ← Can attach ANY policy to itself → becomes admin
-      "iam:CreateAccessKey",    ← Can create login keys for any user
-      "iam:CreateUser"          ← Can create hidden admin backdoor accounts
-    ],
-    "Resource": "*"
-  }]
-}
-```
-
----
-
-## Pipeline Overview
-
-```
-Step 1            Step 2               Step 3            Step 4          Step 5
-────────          ────────             ────────          ────────        ────────
-Generate    →     Scan for       →     Find ghost  →     Azure IAM →     Combine
-AWS cred          privilege            accounts &        analysis        → Full
-report            escalation           missing MFA       (Azure)         governance
-                  paths                                                  report
-(AWS CLI)         (Python)             (Python)          (Python)        (Python)
 ```
 
 ---
@@ -201,206 +82,275 @@ report            escalation           missing MFA       (Azure)         governa
 ## Folder Structure
 
 ```
-module5-iam/
-│
-├── README.md
-│
-├── privilege_escalation_detector.py      ← Step 2: Finds users who can hack themselves to admin
-├── escalation_findings.txt               ← Evidence: 2 CRITICAL users found
-│
-├── access_optimization.py                ← Step 3: Finds ghost accounts and no-MFA users
-├── access_optimization_findings.txt      ← Evidence: 16 issues found
-│
-├── credential_report.csv                 ← Raw AWS report of all users (Step 1 output)
-│
-├── azure_iam_analysis.py                 ← Step 4: Finds overprivileged Azure roles
-├── azure_iam_findings.txt                ← Evidence: 7 issues found
-│
-├── iam_governance_report.py              ← Step 5: Combines everything into final report
-└── iam_governance_report.txt             ← Final professional governance report
+module5-iam-governance/
+├── privilege_escalation_detector.py    ← Step 2: Finds priv-esc paths
+├── escalation_findings.txt             ← Evidence: 2 critical users found
+├── access_optimization.py              ← Step 3: Finds ghost accounts, no-MFA
+├── access_optimization_findings.txt    ← Evidence: 16 issues found
+├── credential_report.csv               ← Raw AWS report of all users
+├── azure_iam_analysis.py               ← Step 4: Finds overprivileged Azure roles
+├── azure_iam_findings.txt              ← Evidence: 7 issues found
+├── iam_governance_report.py            ← Step 5: Combines into final report
+└── iam_governance_report.txt           ← Final professional governance report
 ```
 
 ---
 
-## Script 1 — AWS Credential Report
+## Step-by-Step Execution
 
-AWS generates a built-in credential report listing every IAM user and their security status.
+### Step 1 — Generate AWS Credential Report
 
 ```bash
-# Generate the report (takes ~15 seconds)
+# Generate the report
 aws iam generate-credential-report
 
-# Download it
-aws iam get-credential-report \
-  --query Content \
-  --output text | base64 -d > credential_report.csv
+# Download it as CSV
+aws iam get-credential-report --query 'Content' --output text | base64 -d > credential_report.csv
+
+# Verify the report
+head -5 credential_report.csv
 ```
 
-**Columns in the report:**
-
-| Column | What It Reveals |
-|--------|----------------|
-| `user` | IAM username |
-| `password_enabled` | Does user have console access? |
-| `mfa_active` | Has MFA been set up? |
-| `access_key_1_last_used_date` | When was the last API call? |
-| `password_last_used` | When did they last log in? |
+The credential report contains one row per IAM user with: password status, MFA status, last login time, access key age, and whether keys have ever been used.
 
 ---
 
-## Script 2 — privilege_escalation_detector.py
+### Step 2 — Privilege Escalation Detection
 
 ```bash
-python privilege_escalation_detector.py
+python3 privilege_escalation_detector.py
 ```
 
-**What it scans for:**
+**What the script checks:**
 
 ```
-Dangerous IAM Actions Detected:
-─────────────────────────────────────────────────
-iam:AttachUserPolicy   → Can attach admin policy to itself
-iam:CreateUser         → Can create hidden backdoor accounts
-iam:CreateAccessKey    → Can create new access keys for any user
-iam:PutUserPolicy      → Can add inline policies with full access
-iam:UpdateLoginProfile → Can change any user's password
-Action: "*" on iam:*   → Full IAM control = god-mode
+For every IAM user and every policy attached to them:
+  ┌──────────────────────────────────────────────────────────────┐
+  │  DANGEROUS PERMISSIONS THAT ENABLE PRIVILEGE ESCALATION      │
+  │                                                              │
+  │  iam:AttachUserPolicy  → User can attach ANY policy to self  │
+  │  iam:CreateUser        → User can create new admin accounts  │
+  │  iam:PutUserPolicy     → User can add inline policies        │
+  │  iam:AttachRolePolicy  → User can escalate via roles         │
+  │  Wildcard "*" on IAM   → User has full IAM control           │
+  └──────────────────────────────────────────────────────────────┘
 ```
 
-**Expected output — escalation_findings.txt:**
-```
-=== PRIVILEGE ESCALATION FINDINGS ===
+**Findings:**
 
-[CRITICAL] admin-dave
-  Policy: AdministratorAccess
-  Dangerous Actions: iam:* (wildcard)
-  Risk: Full IAM control — can do anything
-
-[CRITICAL] svc-backup
-  Policy: svc-backup-policy (custom)
-  Dangerous Actions: iam:AttachUserPolicy, iam:CreateUser, iam:CreateAccessKey
-  Risk: Can grant itself administrator access silently
 ```
+[!!] CRITICAL: svc-backup
+     Permission: iam:AttachUserPolicy
+     Risk: This service account can attach AdministratorAccess to itself
+           at any time — becoming a full admin without anyone approving it
+     Fix:  Remove iam:AttachUserPolicy, limit to s3:GetObject only
+
+[!!] CRITICAL: admin-dave
+     Permission: * (wildcard) on all IAM actions
+     Risk: Full IAM control — can create users, assign any permission,
+           bypass all access controls
+     Fix:  Replace with specific named permissions only
+```
+
+**Evidence file:** `escalation_findings.txt`
 
 ---
 
-## Script 3 — access_optimization.py
+### Step 3 — Access Optimization
 
 ```bash
-python access_optimization.py
+python3 access_optimization.py
 ```
 
-**What it finds:**
+**What the script checks:**
 
+| Check | Finding | Count |
+|-------|---------|-------|
+| MFA disabled | Users with no MFA device | 9/9 users (100%) |
+| Ghost accounts | Users who have never logged in | 7/9 users |
+| Inactive access keys | Keys not used in 90+ days | Multiple |
+| Over-provisioned | Users with more permissions than needed | Admin-dave |
+
+**Output:**
 ```
-┌─────────────────────────────────────────────────────────┐
-│             ACCESS OPTIMIZATION CHECKS                  │
-│                                                         │
-│  ✓ Ghost Accounts                                       │
-│    Users who have never logged in or haven't logged in  │
-│    for 90+ days — attack surface with no business value │
-│                                                         │
-│  ✓ Missing MFA                                          │
-│    Console users without multi-factor authentication    │
-│    — password alone is not sufficient for cloud access  │
-│                                                         │
-│  ✓ Inactive Access Keys                                 │
-│    API keys not used in 90+ days — should be rotated   │
-│    or deleted                                           │
-│                                                         │
-│  ✓ Over-Provisioned Users                               │
-│    Admin access for read-only job roles                 │
-│    — principle of least privilege violated              │
-└─────────────────────────────────────────────────────────┘
+Total issues found: 16
+
+MFA Issues (9):
+  - root: MFA disabled ← CRITICAL
+  - admin-dave: MFA disabled ← CRITICAL
+  - svc-backup: MFA disabled
+  - dev-alice: MFA disabled
+  - dev-bob: MFA disabled
+  - [4 more test users]
+
+Ghost Accounts — Never Logged In (7):
+  - dev-bob, dev-charlie, dev-diana, dev-eve,
+    dev-frank, dev-grace, dev-henry
+  These accounts increase the attack surface with no business value
 ```
 
-**Expected output: 16 issues found across 7 users**
+**Evidence file:** `access_optimization_findings.txt`
 
 ---
 
-## Script 4 — azure_iam_analysis.py
+### Step 4 — Azure IAM Analysis
 
 ```bash
-python azure_iam_analysis.py
+# Verify Azure connection
+az account show
+
+# List all role assignments
+az role assignment list --all --output table
+
+# Run analysis script
+python3 azure_iam_analysis.py
 ```
 
-**What it does:**
+**Azure Role Definitions:**
+
+| Azure Role | Plain English | Risk Level |
+|-----------|--------------|-----------|
+| **Owner** | Master key — can do everything including give others access | CRITICAL |
+| **Contributor** | Can create and delete resources but cannot give others access | HIGH |
+| **Reader** | Can only view — cannot change anything | LOW |
+
+**Findings:**
+
+```
+[!!] CRITICAL FINDINGS (3)
+
+User: az-admin@muhammadhussainzahid5gmail.onmicrosoft.com
+Role: Owner
+Scope: Entire subscription
+Issue: Owner role at subscription level — full control of everything
+Fix:   Limit Owner role to specific resource groups only
+
+[!] HIGH RISK FINDINGS (4)
+
+User: az-guest@muhammadhussainzahid5gmail.onmicrosoft.com
+Role: Contributor
+Scope: Entire subscription
+Issue: Contributor at subscription level — can create/delete anything
+Fix:   Guest accounts should have Reader role maximum
+
+SUMMARY
+Total role assignments scanned: 6
+Critical findings: 3
+High risk findings: 4
+Total issues found: 7
+```
+
+**Evidence file:** `azure_iam_findings.txt`
+
+---
+
+### Step 5 — IAM Governance Report
 
 ```bash
-# Lists all role assignments at subscription level
-az role assignment list --all --output json
-
-# Finds Owner-level assignments (highest privilege)
-az role assignment list --all --query "[?roleDefinitionName=='Owner']"
+python3 iam_governance_report.py
+python3 iam_governance_report.py > iam_governance_report.txt
 ```
 
-**Checks performed:**
-- Users with `Owner` role at subscription scope (too broad)
-- Users with `Contributor` who should only be `Reader`
-- Service principals with excessive permissions
-- Guest users with privileged roles
+**Report structure:**
+- Executive Summary — one paragraph for non-technical readers
+- Part 1: AWS Findings — privilege escalation, no MFA, ghost accounts
+- Part 2: Azure Findings — Owner at subscription level, overprivileged roles
+- Risk Score Table — every finding scored 1 to 10
+- Compliance Mapping — which ISO27001, PCI-DSS, CIS, NIST controls each finding violates
+- Remediation Plan — Priority 1 (do now), Priority 2 (this week), Priority 3 (this month)
+- Overall Security Score
 
-**Expected output — azure_iam_findings.txt:**
+---
+
+## Findings Summary
+
+### Risk Score Table
+
+| Finding | Cloud | Risk Level | Score |
+|---------|-------|-----------|-------|
+| Privilege escalation (svc-backup) | AWS | 🔴 CRITICAL | 10/10 |
+| Wildcard admin (admin-dave) | AWS | 🔴 CRITICAL | 10/10 |
+| Owner at subscription level | Azure | 🔴 CRITICAL | 9/10 |
+| No MFA on any account | AWS | 🟠 HIGH | 8/10 |
+| Guest with Contributor role | Azure | 🟠 HIGH | 7/10 |
+| Ghost accounts (7 users) | AWS | 🟠 HIGH | 7/10 |
+| Dev Contributor at subscription | Azure | 🟡 MEDIUM | 5/10 |
+
+### Overall IAM Security Score
+
+| Account | Score | Risk Level |
+|---------|-------|-----------|
+| AWS | 32 / 100 | 🔴 Critical |
+| Azure | 41 / 100 | 🔴 Critical |
+| **Combined** | **36 / 100** | **🔴 Critical** |
+
+---
+
+## Compliance Standards Mapping
+
+| Standard | Control | What It Requires | Finding That Violates It |
+|----------|---------|-----------------|--------------------------|
+| ISO 27001 | A.9.1.1 | Access control policy must exist | No MFA policy, overprivileged roles |
+| ISO 27001 | A.9.2.1 | User access must be formally managed | Ghost accounts never reviewed |
+| ISO 27001 | A.9.2.5 | Access rights reviewed regularly | 7 accounts never logged in, never reviewed |
+| ISO 27001 | A.9.4.2 | Secure log-on procedures | MFA not enabled on any account |
+| PCI-DSS | Req 7.1 | Restrict access to need-to-know | admin-dave has full admin unnecessarily |
+| PCI-DSS | Req 8.3 | MFA required for admin access | 9/9 users have no MFA |
+| CIS AWS | 1.10 | MFA enabled for all console users | 9 users with MFA disabled |
+| CIS AWS | 1.12 | Inactive credentials must be removed | 7 ghost accounts with credentials |
+| CIS AWS | 1.16 | Admin privileges not given unnecessarily | admin-dave with full admin access |
+| CIS Azure | 1.23 | Owner role should not be at subscription level | 3 Owner assignments at subscription |
+| NIST CSF | PR.AC-1 | Identity management and access control in place | No formal IAM review process |
+| NIST CSF | PR.AC-4 | Access permissions minimized | Multiple over-provisioned accounts |
+
+---
+
+## Remediation Plan
+
+### Priority 1 — Do Now (Critical)
+
 ```
-7 issues found:
-- 2 users with Owner role at subscription level (should be resource-group scoped)
-- 3 users with Contributor but no business justification
-- 2 guest users with privileged roles
+1. Enable MFA on the root account immediately
+2. Enable MFA on admin-dave immediately
+3. Remove iam:AttachUserPolicy from svc-backup — replace with s3:GetObject only
+4. Replace admin-dave's wildcard (*) policy with specific named permissions
+5. Review and reduce Owner role assignments at Azure subscription level
+```
+
+### Priority 2 — This Week (High)
+
+```
+6. Enable MFA on all remaining IAM users
+7. Disable or delete the 7 ghost accounts that have never logged in
+8. Move az-guest from Contributor to Reader role in Azure
+```
+
+### Priority 3 — This Month (Medium)
+
+```
+9. Implement quarterly access reviews for all IAM users
+10. Set up automated alerts for any IAM policy changes
+11. Implement Just-In-Time access for privileged operations
 ```
 
 ---
 
-## Script 5 — iam_governance_report.py
+## Test Environment Note
 
-```bash
-python iam_governance_report.py
-```
-
-Combines all findings into one professional report with compliance mapping:
-
-```
-IAM GOVERNANCE REPORT — Compliance Mapping
-────────────────────────────────────────────────────────────────────
-
-Finding: MFA not enabled on console users
-  CIS Control:     CIS 1.10 — Ensure MFA is enabled for all IAM users
-  ISO 27001:       A.9.4.2 — Secure log-on procedures
-  PCI-DSS:         Req 8.3 — Secure individual non-consumer user auth
-  NIST CSF:        PR.AC-7 — Users/processes authenticated
-  Recommendation:  Enable MFA immediately for all console users
-
-Finding: Privilege escalation path — svc-backup
-  CIS Control:     CIS 1.16 — Ensure IAM policies are attached only to groups/roles
-  ISO 27001:       A.9.2.3 — Management of privileged access rights
-  NIST CSF:        PR.AC-4 — Access permissions managed
-  Recommendation:  Remove iam:AttachUserPolicy from svc-backup-policy
-```
+Since the initial AWS account had only 2 real users, realistic test users were created so the scripts had meaningful data to analyse. This is standard practice in lab and exam environments. The test users (`dev-alice` through `dev-henry`) simulate a realistic enterprise IAM environment with varied permission levels and access patterns.
 
 ---
 
-## Key Findings Summary
+## Exam Objective Coverage
 
-| Category | Finding | Count | Severity |
-|----------|---------|-------|----------|
-| Privilege Escalation | Users who can self-escalate to admin | 2 | 🔴 CRITICAL |
-| Missing MFA | Console users without MFA | 4 | 🟠 HIGH |
-| Ghost Accounts | Accounts never/rarely used | 2 | 🟡 MEDIUM |
-| Overprivileged | Admin access for non-admin roles | 3 | 🟠 HIGH |
-| Inactive Keys | Access keys not used in 90+ days | 3 | 🟡 MEDIUM |
-| Azure Issues | Overprivileged Azure role assignments | 7 | 🟠 HIGH |
-| **Total** | | **21** | |
+| Topic 97 Objective | How Module 5 Satisfies It |
+|--------------------|--------------------------|
+| e-i: Cloud IAM governance with automated role management and access reviews | `privilege_escalation_detector.py` + `access_optimization.py` scan all users and policies automatically |
+| e-ii: Privilege escalation detection and automated remediation | Detects `iam:AttachUserPolicy`, wildcard `*`, `CreateUser` paths with specific remediation recommendations |
+| e-iii: Identity risk assessment and access optimization automation | `access_optimization.py` finds ghost accounts, no-MFA users, inactive access keys |
+| a-i: Unified cloud security governance across AWS and Azure | `azure_iam_analysis.py` scans Azure role assignments at subscription level |
+| b-iii: Automated audit evidence collection | `iam_governance_report.py` — full report with ISO27001, PCI-DSS, CIS, NIST mapping |
 
 ---
 
-## How This Feeds the Next Module
-
-```
-Module 5 Output                    →    Consumed By
-─────────────────────────────────────────────────────
-iam_governance_report.txt          →    Module 6 (IAM section of dashboard)
-escalation_findings.txt            →    Module 6 (critical alerts panel)
-azure_iam_findings.txt             →    Module 6 (multi-cloud IAM summary)
-Total issue count (21)             →    Module 6 (IAM risk score metric)
-```
-
-> **Key insight for the interview:** IAM is the most attacked layer of cloud security. 74% of breaches involve stolen or abused credentials (Verizon DBIR). This module demonstrates that even a small AWS account with 7 users has 21 IAM issues — in a real enterprise with thousands of users, automated IAM governance isn't optional, it's essential.
+*Module 5 of 6 — Enterprise Cloud Security Operations Platform*

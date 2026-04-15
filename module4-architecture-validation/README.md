@@ -1,432 +1,391 @@
 # Module 4 — Architecture Validation
 
-> **Security Gate Before Deployment — OPA · Terraform Sentinel · Terraform · Ansible**
-> **Status:** ✅ Complete | **Platform:** GitHub Codespace + AWS EC2 (eu-north-1) | **EC2:** 51.20.34.243
+> **Pre-Deployment Security Gates · Infrastructure-as-Code Security · Server Hardening**  
+> AWS (eu-north-1) — including real EC2 instance: 51.20.34.243
 
----
-
-## Table of Contents
-- [What This Module Does](#what-this-module-does)
-- [Architecture Diagram](#architecture-diagram)
-- [DevSecOps Pipeline Diagram](#devsecops-pipeline-diagram)
-- [Tools Used](#tools-used)
-- [Folder Structure](#folder-structure)
-- [Tool 1 — OPA (Open Policy Agent)](#tool-1--opa-open-policy-agent)
-- [Tool 2 — Terraform Sentinel](#tool-2--terraform-sentinel)
-- [Tool 3 — Terraform](#tool-3--terraform)
-- [Tool 4 — Ansible](#tool-4--ansible)
-- [Reports Generated](#reports-generated)
-- [How This Feeds the Next Module](#how-this-feeds-the-next-module)
+**Status:** ✅ Complete  
+**Tools:** OPA (Open Policy Agent) · Terraform Sentinel · Terraform · Ansible  
+**EC2 Instance:** Ubuntu Server — eu-north-1
 
 ---
 
 ## What This Module Does
 
-Modules 1, 2, and 3 dealt with existing cloud infrastructure — scanning what is already deployed, monitoring it, and scoring its risk. Module 4 is different: it is the **prevention** module.
+Module 4 builds a **security gate that stops bad infrastructure before it ever gets deployed** to the cloud. This is the prevention module.
 
-```
-Module 1   →   Scans existing cloud for problems          (Doctor doing a check-up)
-Module 2   →   Monitors compliance continuously           (Security camera watching 24/7)
-Module 4   →   Blocks insecure code BEFORE deployment     (Building inspector rejecting bad blueprints)
-```
+| Module | Approach | Analogy |
+|--------|---------|---------|
+| Module 1 | Scans existing cloud for problems | Doctor doing a check-up on a patient |
+| Module 2 | Monitors compliance continuously | Security camera watching 24/7 |
+| **Module 4** | **Blocks insecure code before deployment** | **Building inspector rejecting bad blueprints** |
 
-Module 4 answers the question: **"How do we make sure NEW infrastructure is secure before anyone builds it?"**
+Module 4 answers: *"How do we make sure NEW infrastructure is secure before anyone builds it?"*
 
 ---
 
-## Architecture Diagram
+## Architecture — Full DevSecOps Pipeline
 
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│                  MODULE 4 — ARCHITECTURE VALIDATION                  │
-└──────────────────────────────────────────────────────────────────────┘
-
-  Developer writes        ┌──────────────┐
-  Terraform code    ────► │   TERRAFORM  │
-                          │  insecure    │
-                          │  -infra.tf   │
-                          │  secure      │
-                          │  -infra.tf   │
-                          └──────┬───────┘
-                                 │ generates tfplan.json
-                  ┌──────────────┼──────────────┐
-                  │              │              │
-         ┌────────▼───────┐      │    ┌─────────▼──────┐
-         │      OPA       │      │    │    SENTINEL     │
-         │  Open Policy   │      │    │  Terraform-     │
-         │  Agent         │      │    │  native policy  │
-         │                │      │    │  engine         │
-         │  rego policies │      │    │                 │
-         │  encryption    │      │    │  encryption     │
-         │  s3-security   │      │    │  network-sec    │
-         │  sec-group     │      │    │  s3-security    │
-         └────────┬───────┘      │    └─────────┬───────┘
-                  │              │              │
-                  │    PASS ✅   │   FAIL ❌   │
-                  │   FAIL ❌    │             │
-                  └──────────────┼─────────────┘
-                                 │
-                                 │ If PASS → Deploy
-                                 ▼
-                        ┌────────────────┐
-                        │  AWS EC2       │
-                        │  Ubuntu Server │
-                        │  51.20.34.243  │
-                        │  eu-north-1    │
-                        └───────┬────────┘
-                                │
-                                ▼
-                        ┌────────────────┐
-                        │    ANSIBLE     │
-                        │  Hardening     │
-                        │  Playbook      │
-                        │                │
-                        │  • SSH config  │
-                        │  • Firewall    │
-                        │  • Auto-update │
-                        │  • Fail2ban    │
-                        │  • Log audit   │
-                        └───────┬────────┘
-                                │
-                                ▼
-                        ┌────────────────┐
-                        │    REPORTS     │
-                        │  opa-report    │
-                        │  sentinel-rep  │
-                        │  ansible-rep   │
-                        │  module4-sum   │
-                        └────────────────┘
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    MODULE 4 DEVSECOPS PIPELINE                          │
+│                                                                         │
+│  Developer writes Terraform code (insecure-infra.tf / secure-infra.tf)  │
+│                          │                                              │
+│                          ▼                                              │
+│              ┌───────────────────────┐                                 │
+│              │   PRE-DEPLOYMENT      │                                 │
+│              │   SECURITY GATES      │                                 │
+│              │                       │                                 │
+│              │  ┌─────────────────┐  │                                 │
+│              │  │   OPA           │  │  ◄── s3-security.rego           │
+│              │  │   (Open Policy  │  │  ◄── security-group.rego        │
+│              │  │    Agent)       │  │  ◄── encryption.rego            │
+│              │  └────────┬────────┘  │                                 │
+│              │           │           │                                 │
+│              │  ┌────────▼────────┐  │                                 │
+│              │  │  Terraform      │  │  ◄── s3-security.sentinel       │
+│              │  │  Sentinel       │  │  ◄── encryption.sentinel        │
+│              │  └────────┬────────┘  │  ◄── network-security.sentinel  │
+│              └───────────┼───────────┘                                 │
+│                          │                                              │
+│                ┌─────────┴──────────┐                                  │
+│                │                    │                                   │
+│                ▼                    ▼                                   │
+│         ❌ VIOLATIONS          ✅ CLEAN CODE                            │
+│         BLOCKED                APPROVED                                 │
+│         (7 blocked on          (0 violations on                         │
+│          insecure infra)        secure infra)                           │
+│                                      │                                  │
+│                                      ▼                                  │
+│                          ┌───────────────────────┐                     │
+│                          │  Terraform deploys     │                     │
+│                          │  EC2 instance to AWS   │                     │
+│                          │  (51.20.34.243)         │                     │
+│                          └───────────┬────────────┘                    │
+│                                      │                                  │
+│                                      ▼                                  │
+│                          ┌───────────────────────┐                     │
+│                          │  Ansible Hardening     │                     │
+│                          │  Playbook runs on EC2  │                     │
+│                          │  • SSH hardening        │                    │
+│                          │  • UFW firewall         │                    │
+│                          │  • Audit logging        │                    │
+│                          │  • Password policy      │                    │
+│                          │  • File permissions     │                    │
+│                          └───────────────────────┘                     │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## DevSecOps Pipeline Diagram
+## Tools Overview
 
-```
-┌────────────────────────────────────────────────────────────────────┐
-│                    DEVSECOPS PIPELINE                              │
-│                                                                    │
-│  CODE         PRE-DEPLOY          DEPLOY          POST-DEPLOY      │
-│  PHASE        GATES               PHASE           HARDENING        │
-│                                                                    │
-│  ┌──────┐   ┌──────────────┐   ┌──────────┐   ┌─────────────┐    │
-│  │Terra-│   │ OPA Policy   │   │  Cloud   │   │   Ansible   │    │
-│  │form  ├──►│ Validation   ├──►│  Deploy  ├──►│  Hardening  │    │
-│  │Code  │   │              │   │  (EC2,   │   │  Playbook   │    │
-│  │      │   │ Sentinel     │   │   S3,    │   │             │    │
-│  │      │   │ Policy Check │   │   RDS)   │   │  SSH, UFW,  │    │
-│  └──────┘   │              │   └──────────┘   │  Fail2ban,  │    │
-│             │ ❌ BLOCK if  │                   │  Updates    │    │
-│             │ insecure     │                   └─────────────┘    │
-│             └──────────────┘                                       │
-│                                                                    │
-│  Tools:     OPA + Sentinel        Terraform        Ansible         │
-│  Stage:     Prevent               Deploy           Harden          │
-└────────────────────────────────────────────────────────────────────┘
-```
+| Tool | What It Does | Why Used |
+|------|-------------|---------|
+| **OPA** | Reads infrastructure code before deployment and blocks anything violating security rules | Language-agnostic, works with any cloud tool, maps to GDPR/CIS/ISO27001 |
+| **Terraform Sentinel** | HashiCorp's built-in policy engine specifically for Terraform | Native Terraform integration, hard-mandatory enforcement level |
+| **Terraform** | Writes cloud infrastructure as code — servers, databases, storage | Shows infrastructure-as-code approach with secure vs insecure examples |
+| **Ansible** | Automatically configures and hardens servers after deployment | Demonstrates automated post-deployment hardening on a real EC2 instance |
 
 ---
 
-## Tools Used
+## Tool Versions
 
-| Tool | Version | What It Does | Why Used |
-|------|---------|-------------|----------|
-| **OPA** (Open Policy Agent) | v1.15.1 | Reads infrastructure code before deployment and blocks policy violations | Language-agnostic; works with any cloud tool; maps to GDPR/CIS/ISO 27001 |
-| **Terraform Sentinel** | v0.30.0 | HashiCorp's native policy engine specifically for Terraform | Native Terraform integration; hard-mandatory enforcement level |
-| **Terraform** | v1.14.8 | Writes cloud infrastructure as code — shows secure vs insecure examples | Demonstrates infrastructure-as-code approach |
-| **Ansible** | core 2.20.4 | Automatically configures and hardens servers after deployment | Demonstrates automated post-deployment hardening on real EC2 |
+| Tool | Version | Install Command |
+|------|---------|----------------|
+| Terraform | v1.14.8 | Pre-installed via devcontainer.json |
+| Ansible | core 2.20.4 | `pip install ansible --break-system-packages` |
+| OPA | v1.15.1 | `curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static` |
+| Sentinel | v0.30.0 | `curl -L -o sentinel.zip https://releases.hashicorp.com/sentinel/0.30.0/...` |
 
 ---
 
 ## Folder Structure
 
 ```
-module4-architecture/
-│
-├── README.md
-│
+module4-architecture-validation/
 ├── opa/
 │   ├── policies/
-│   │   ├── encryption.rego           ← Block unencrypted resources
-│   │   ├── s3-security.rego          ← Block public S3 buckets
-│   │   └── security-group.rego       ← Block open 0.0.0.0/0 rules
-│   └── test/
-│       ├── insecure-input.json       ← Test input that should FAIL
-│       └── secure-input.json         ← Test input that should PASS
-│
-├── sentinel/
-│   ├── policies/
-│   │   ├── encryption.sentinel       ← Enforce encryption-at-rest
-│   │   ├── network-security.sentinel ← Block unrestricted ingress
-│   │   └── s3-security.sentinel      ← Block public access on S3
-│   ├── sentinel.hcl                  ← Sentinel config + enforcement levels
-│   └── test/
-│       ├── insecure-tfplan.json      ← Simulated bad Terraform plan
-│       └── secure-tfplan.json        ← Simulated good Terraform plan
-│
+│   │   ├── s3-security.rego         ← Blocks public S3 buckets
+│   │   ├── security-group.rego      ← Blocks open SSH/RDP
+│   │   └── encryption.rego          ← Blocks unencrypted storage
+│   ├── insecure-input.json          ← Test data with intentional violations
+│   └── secure-input.json            ← Test data with all violations fixed
 ├── terraform/
-│   ├── insecure-infra.tf             ← Deliberately insecure (for OPA/Sentinel demo)
-│   └── secure-infra.tf               ← Properly secured infrastructure
-│
+│   ├── insecure-infra.tf            ← Deliberately insecure IaC (demo only)
+│   └── secure-infra.tf              ← Properly secured IaC
+├── sentinel/
+│   ├── sentinel.hcl                 ← Policy configuration
+│   ├── policies/
+│   │   ├── s3-security.sentinel
+│   │   ├── encryption.sentinel
+│   │   └── network-security.sentinel
+│   └── test/
+│       ├── insecure-tfplan.json
+│       └── secure-tfplan.json
 ├── ansible/
-│   ├── hardening-playbook.yml        ← Full server hardening automation
-│   └── reset-playbook.yml            ← Undo hardening (for re-demo)
-│
+│   ├── hardening-playbook.yml       ← 7-section server hardening
+│   └── reset-playbook.yml           ← Restores insecure defaults for demo
 └── reports/
-    ├── opa-validation-report.txt      ← OPA PASS/FAIL results
-    ├── sentinel-validation-report.txt ← Sentinel PASS/FAIL results
-    ├── ansible-hardening-report-ec2.txt ← Ansible task execution log
-    └── module4-summary.txt            ← Overall module summary
+    └── ansible-hardening-report-ec2.txt ← Evidence: real EC2 hardened
 ```
 
 ---
 
 ## Tool 1 — OPA (Open Policy Agent)
 
-OPA uses `.rego` policies — a declarative language that describes what is and is not allowed in infrastructure.
+### What is OPA?
 
-### Installation
-```bash
-curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static
-chmod +x opa
-sudo mv opa /usr/local/bin/
-```
+OPA is a policy engine that checks infrastructure code against security rules **before anything gets deployed**. Like a building inspector — before a house is built, the inspector checks the blueprint. OPA does this for cloud infrastructure code.
 
-### Policies Written
+### OPA Policies
 
-**encryption.rego** — Block any resource without encryption enabled:
-```rego
-package security.encryption
+| Policy File | What It Blocks | Standards Mapped |
+|------------|----------------|-----------------|
+| `s3-security.rego` | Public S3 buckets (public-read / public-read-write ACL), Buckets without versioning | GDPR Article 32, CIS AWS 2.1.5, ISO27001 A.12.3 |
+| `security-group.rego` | SSH (port 22) open to 0.0.0.0/0, RDP (port 3389) open to 0.0.0.0/0, All traffic open | CIS AWS 4.1, CIS AWS 4.2, PCI-DSS Req 1 |
+| `encryption.rego` | Unencrypted EBS volumes, Unencrypted RDS databases, S3 without server-side encryption | GDPR Article 32, PCI-DSS Req 3, ISO27001 A.10.1 |
 
-deny[msg] {
-  resource := input.resources[_]
-  resource.type == "aws_ebs_volume"
-  not resource.config.encrypted
-  msg := sprintf("DENY: EBS volume '%v' is not encrypted", [resource.name])
-}
-```
+### OPA Test Data
 
-**s3-security.rego** — Block public S3 buckets:
-```rego
-package security.s3
+| File | Purpose | What It Contains |
+|------|---------|-----------------|
+| `insecure-input.json` | The "bad" infrastructure — OPA should BLOCK this | Public S3 bucket, open SSH/RDP, unencrypted EBS + RDS |
+| `secure-input.json` | The "good" infrastructure — OPA should APPROVE this | Private S3, restricted SSH, encrypted everything |
 
-deny[msg] {
-  resource := input.resources[_]
-  resource.type == "aws_s3_bucket_acl"
-  resource.config.acl == "public-read"
-  msg := sprintf("DENY: S3 bucket '%v' has public-read ACL", [resource.name])
-}
-```
-
-### Running OPA Validation
+### OPA Commands
 
 ```bash
-# Test insecure infrastructure — should produce DENY messages
+# Test 1 — S3 Security Policy against insecure infrastructure
 opa eval \
-  --data opa/policies/ \
-  --input opa/test/insecure-input.json \
-  "data.security" \
-  --format pretty | tee reports/opa-validation-report.txt
+  --data module4-architecture-validation/opa/policies/ \
+  --input module4-architecture-validation/opa/insecure-input.json \
+  --format pretty \
+  "data.aws.s3.security.deny"
+# Expected: ["BLOCKED: S3 bucket 'insecure_bucket' has public-read ACL. Violates GDPR Article 32 and CIS AWS 2.1.5"]
 
-# Test secure infrastructure — should produce no DENY messages
+# Test 2 — Network Security Policy against insecure infrastructure
 opa eval \
-  --data opa/policies/ \
-  --input opa/test/secure-input.json \
-  "data.security" \
-  --format pretty
+  --data module4-architecture-validation/opa/policies/ \
+  --input module4-architecture-validation/opa/insecure-input.json \
+  --format pretty \
+  "data.aws.security.network.deny"
+# Expected: ["BLOCKED: SSH from anywhere. Violates CIS AWS 4.1", "BLOCKED: RDP from anywhere. Violates CIS AWS 4.2"]
+
+# Test 3 — Encryption Policy against insecure infrastructure
+opa eval \
+  --data module4-architecture-validation/opa/policies/ \
+  --input module4-architecture-validation/opa/insecure-input.json \
+  --format pretty \
+  "data.aws.encryption.deny"
+# Expected: 4 violations (EBS, RDS, S3 x2)
+
+# Test 4 — All policies against SECURE infrastructure (should return empty)
+opa eval --data module4-architecture-validation/opa/policies/ \
+  --input module4-architecture-validation/opa/secure-input.json \
+  --format pretty "data.aws.s3.security.deny"
+# Expected: []
 ```
+
+### OPA Results
+
+| Infrastructure | S3 Check | Network Check | Encryption Check | Total Violations |
+|---------------|----------|--------------|-----------------|-----------------|
+| Insecure | ❌ 1 BLOCKED | ❌ 2 BLOCKED | ❌ 4 BLOCKED | **7 violations blocked** |
+| Secure | ✅ [] Clean | ✅ [] Clean | ✅ [] Clean | **0 — APPROVED** |
 
 ---
 
 ## Tool 2 — Terraform Sentinel
 
-Sentinel is HashiCorp's policy-as-code framework built specifically for Terraform, with **hard-mandatory** enforcement (cannot be overridden).
+### OPA vs Sentinel
 
-### Installation
-```bash
-curl -L -o sentinel.zip https://releases.hashicorp.com/sentinel/0.30.0/sentinel_0.30.0_linux_amd64.zip
-unzip sentinel.zip
-sudo mv sentinel /usr/local/bin/
-```
+| Feature | OPA | Sentinel |
+|---------|-----|---------|
+| Made by | Open Policy Agent (CNCF) | HashiCorp (makers of Terraform) |
+| Language | `.rego` files | `.sentinel` files |
+| Integration | Works with any tool | Native to Terraform / Vault / Nomad |
+| Enforcement levels | Pass / Fail | advisory / soft-mandatory / **hard-mandatory** |
+| Used for | Any infrastructure code | Terraform-specific policies |
 
-### Example Sentinel Policy — Encryption
+### Enforcement Levels
 
-```python
-# encryption.sentinel
-import "tfplan/v2" as tfplan
+| Level | Effect |
+|-------|--------|
+| `advisory` | Runs but never blocks — just warns the developer |
+| `soft-mandatory` | Blocks deployment BUT a senior person can override it |
+| `hard-mandatory` | **ALWAYS blocks, no override possible — not even by the CEO** |
 
-# Get all AWS resources from the plan
-aws_resources = filter tfplan.resource_changes as _, rc {
-  rc.mode is "managed" and
-  rc.type in ["aws_ebs_volume", "aws_s3_bucket", "aws_rds_cluster"]
-}
+All three Sentinel policies in this platform use **hard-mandatory**.
 
-# Deny any resource without encryption
-deny_unencrypted = rule {
-  all aws_resources as _, rc {
-    rc.change.after.encrypted is true
-  }
-}
+### Sentinel Policy Configuration (`sentinel.hcl`)
 
-main = rule { deny_unencrypted }
-```
-
-### Running Sentinel
-
-```bash
-# Test against insecure plan — should FAIL
-sentinel apply -config sentinel/sentinel.hcl \
-  sentinel/policies/encryption.sentinel \
-  | tee reports/sentinel-validation-report.txt
-```
-
----
-
-## Tool 3 — Terraform
-
-Two infrastructure files demonstrate the difference between insecure and secure code.
-
-### insecure-infra.tf — What NOT to Do
 ```hcl
-# ❌ INSECURE — publicly readable S3 bucket
-resource "aws_s3_bucket" "data" {
-  bucket = "my-data-bucket"
-  acl    = "public-read"    # VIOLATION: Public access
+policy "s3-security" {
+  source           = "./policies/s3-security.sentinel"
+  enforcement_level = "hard-mandatory"
 }
 
-# ❌ INSECURE — unencrypted EBS volume
-resource "aws_ebs_volume" "data" {
-  size      = 20
-  encrypted = false          # VIOLATION: No encryption
+policy "encryption" {
+  source           = "./policies/encryption.sentinel"
+  enforcement_level = "hard-mandatory"
 }
 
-# ❌ INSECURE — open security group
-resource "aws_security_group_rule" "allow_all" {
-  cidr_blocks = ["0.0.0.0/0"]  # VIOLATION: Unrestricted access
-  from_port   = 0
-  to_port     = 65535
+policy "network-security" {
+  source           = "./policies/network-security.sentinel"
+  enforcement_level = "hard-mandatory"
 }
 ```
 
-### secure-infra.tf — Best Practice
-```hcl
-# ✅ SECURE — private S3 bucket with encryption
-resource "aws_s3_bucket" "data" {
-  bucket = "my-secure-data-bucket"
-}
+### Sentinel Policies
 
-resource "aws_s3_bucket_public_access_block" "data" {
-  bucket                  = aws_s3_bucket.data.id
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-}
+| Policy File | What It Blocks | Enforcement Level |
+|------------|----------------|-----------------|
+| `s3-security.sentinel` | public-read and public-read-write S3 bucket ACLs | hard-mandatory |
+| `encryption.sentinel` | EBS volumes with `encrypted=false`, RDS with `storage_encrypted=false` | hard-mandatory |
+| `network-security.sentinel` | Security groups allowing SSH or RDP from 0.0.0.0/0 | hard-mandatory |
 
-resource "aws_ebs_volume" "data" {
-  size      = 20
-  encrypted = true           # ✅ Encrypted at rest
-  kms_key_id = aws_kms_key.main.arn
-}
-```
-
----
-
-## Tool 4 — Ansible
-
-Ansible automatically hardens the deployed EC2 instance — applying 15+ security controls in one playbook execution.
-
-### Target Server
-```
-EC2 Instance: Ubuntu Server
-IP: 51.20.34.243
-Region: eu-north-1 (Stockholm)
-```
-
-### Hardening Playbook — What It Does
-
-```yaml
-# hardening-playbook.yml
----
-- name: Security Hardening Playbook
-  hosts: all
-  become: yes
-
-  tasks:
-    - name: Update all packages
-      apt: upgrade=dist update_cache=yes
-
-    - name: Install security tools
-      apt:
-        name: [ufw, fail2ban, auditd, unattended-upgrades]
-        state: present
-
-    - name: Configure UFW firewall — deny all by default
-      ufw: state=enabled policy=deny
-
-    - name: Allow SSH only
-      ufw: rule=allow port=22 proto=tcp
-
-    - name: Disable root SSH login
-      lineinfile:
-        path: /etc/ssh/sshd_config
-        regexp: '^PermitRootLogin'
-        line: 'PermitRootLogin no'
-
-    - name: Disable password authentication (keys only)
-      lineinfile:
-        path: /etc/ssh/sshd_config
-        regexp: '^PasswordAuthentication'
-        line: 'PasswordAuthentication no'
-
-    - name: Configure Fail2ban — ban after 3 failed attempts
-      copy:
-        dest: /etc/fail2ban/jail.local
-        content: |
-          [DEFAULT]
-          maxretry = 3
-          bantime = 3600
-
-    - name: Enable automatic security updates
-      copy:
-        dest: /etc/apt/apt.conf.d/20auto-upgrades
-        content: |
-          APT::Periodic::Update-Package-Lists "1";
-          APT::Periodic::Unattended-Upgrade "1";
-```
-
-### Running Ansible
+### Sentinel Commands
 
 ```bash
-# Run hardening playbook on EC2
-ansible-playbook ansible/hardening-playbook.yml \
-  -i 51.20.34.243, \
-  --private-key ~/.ssh/your-key.pem \
-  -u ubuntu \
-  | tee reports/ansible-hardening-report-ec2.txt
+# Test against INSECURE infrastructure (should FAIL)
+sentinel apply \
+  -global "tfplan=$(cat test/insecure-tfplan.json)" \
+  policies/s3-security.sentinel
+# Expected: Fail - s3-security.sentinel
+
+sentinel apply \
+  -global "tfplan=$(cat test/insecure-tfplan.json)" \
+  policies/encryption.sentinel
+# Expected: Fail - encryption.sentinel
+
+sentinel apply \
+  -global "tfplan=$(cat test/insecure-tfplan.json)" \
+  policies/network-security.sentinel
+# Expected: Fail - network-security.sentinel
+
+# Test against SECURE infrastructure (should PASS)
+sentinel apply -global "tfplan=$(cat test/secure-tfplan.json)" policies/s3-security.sentinel
+sentinel apply -global "tfplan=$(cat test/secure-tfplan.json)" policies/encryption.sentinel
+sentinel apply -global "tfplan=$(cat test/secure-tfplan.json)" policies/network-security.sentinel
+# Expected: Pass - all three
 ```
+
+### Sentinel Results
+
+| Infrastructure | s3-security | encryption | network-security |
+|---------------|------------|-----------|-----------------|
+| Insecure | ❌ FAIL — blocked | ❌ FAIL — blocked | ❌ FAIL — blocked |
+| Secure | ✅ PASS — approved | ✅ PASS — approved | ✅ PASS — approved |
 
 ---
 
-## Reports Generated
+## Tool 3 — Terraform Infrastructure-as-Code
 
-| Report | Description | Key Evidence |
-|--------|-------------|-------------|
-| `opa-validation-report.txt` | OPA PASS/FAIL per policy per resource | Shows which insecure resources were blocked |
-| `sentinel-validation-report.txt` | Sentinel PASS/FAIL results | Shows hard-mandatory enforcement in action |
-| `ansible-hardening-report-ec2.txt` | Task-by-task Ansible execution log | Proves 15+ controls applied to live EC2 |
-| `module4-summary.txt` | Overall module validation summary | High-level PASS/FAIL count |
+### Insecure vs Secure Comparison
+
+| Resource | Insecure Version ❌ | Secure Version ✅ | Standard |
+|---------|-------------------|------------------|---------|
+| S3 Bucket ACL | `acl = "public-read"` | No ACL + block all public access | CIS AWS 2.1.5 |
+| S3 Versioning | Missing entirely | `versioning { enabled = true }` | ISO27001 A.12.3 |
+| S3 Encryption | Missing entirely | AES256 server-side encryption | GDPR Article 32 |
+| Security Group SSH | `cidr_blocks = ["0.0.0.0/0"]` | `cidr_blocks = ["10.0.0.0/8"]` | CIS AWS 4.1 |
+| EBS Volume | `encrypted = false` | `encrypted = true` | GDPR Article 32 |
+| RDS Database | `storage_encrypted = false` | `storage_encrypted = true` | PCI-DSS Req 3 |
+
+> **Note:** The insecure file exists for demonstration purposes only — it is never deployed to real infrastructure. Its purpose is to prove that OPA and Sentinel policies actually work.
 
 ---
 
-## How This Feeds the Next Module
+## Tool 4 — Ansible Hardening Playbook
+
+### Where Ansible Fits
 
 ```
-Module 4 Output              →    Consumed By
-──────────────────────────────────────────────
-opa-validation-report.txt    →    Module 6 (architecture score in dashboard)
-sentinel-report.txt          →    Module 6 (policy gate results)
-ansible-report.txt           →    Module 6 (hardening evidence)
+Step 1: Developer writes Terraform code
+Step 2: OPA scans the code → insecure = BLOCKED
+Step 3: Sentinel scans the code → insecure = BLOCKED
+Step 4: Code passes checks → Terraform deploys EC2 to AWS
+Step 5: Ansible automatically runs on the new server
+Step 6: Ansible hardens the server (firewall, SSH, audit logs, etc.)
+Step 7: Server is now secure and ready for use ✅
 ```
 
-> **Key insight for the interview:** The four tools cover three distinct stages of the deployment pipeline. OPA and Sentinel are pre-deployment gates — they stop bad code before it touches the cloud. Terraform shows what the infrastructure looks like as code. Ansible hardens the server after deployment. Together, they form a complete DevSecOps pipeline — from commit to hardened server.
+### The Seven Hardening Sections
+
+| Section | What It Does | Standards Covered |
+|---------|-------------|------------------|
+| 1. System Updates | Automatically updates all OS packages to latest versions | CIS Benchmark 1.9 |
+| 2. SSH Hardening | Disables root login, forces key-only auth, limits to 3 attempts, disables X11 | CIS 5.2.6 / 5.2.7 / 5.2.8 / 5.2.12 |
+| 3. Firewall (UFW) | Denies all incoming traffic by default, allows only SSH (22) and HTTPS (443) | CIS 3.5, PCI-DSS Req 1 |
+| 4. Audit Logging | Installs auditd, logs all login attempts and all privileged root commands | ISO27001 A.12.4, GDPR Art.32, PCI-DSS Req 10 |
+| 5. Password Policy | Sets 90-day password expiry and 7-day minimum age | CIS 5.4.1 |
+| 6. Disable Services | Stops and disables telnet and FTP (old, insecure protocols) | CIS 2.1 |
+| 7. File Permissions | Sets correct permissions on `/etc/passwd` (0644) and `/etc/shadow` (0640) | CIS 6.1.2 / 6.1.3 |
+
+### Commands — Running on Real EC2 (51.20.34.243)
+
+```bash
+# Verify SSH connection
+ssh -i lab-key.pem -o StrictHostKeyChecking=no ubuntu@51.20.34.243 "echo connected"
+# Expected: connected
+
+# Step 1 — Reset to insecure defaults (for demo purposes)
+ansible-playbook module4-architecture-validation/ansible/reset-playbook.yml \
+  --inventory "51.20.34.243," \
+  --user ubuntu \
+  --private-key lab-key.pem \
+  -v
+
+# Step 2 — Run hardening playbook (applies all security controls)
+ansible-playbook module4-architecture-validation/ansible/hardening-playbook.yml \
+  --inventory "51.20.34.243," \
+  --user ubuntu \
+  --private-key lab-key.pem \
+  --tags "ssh,firewall,audit,password,permissions" \
+  -v 2>&1 | tee module4-architecture-validation/reports/ansible-hardening-report-ec2.txt
+```
+
+### Hardening Results — Task by Task
+
+| Task | Result | Change Applied to Server |
+|------|--------|-------------------------|
+| Disable root SSH login | ✅ changed | `sshd_config: PermitRootLogin no` |
+| Disable password authentication | ✅ changed | `sshd_config: PasswordAuthentication no` |
+| Set max auth tries = 3 | ✅ changed | `sshd_config: MaxAuthTries 3` |
+| Disable X11 forwarding | ✅ changed | `sshd_config: X11Forwarding no` |
+| Install UFW firewall | ✅ ok | Already installed — no change needed |
+| Deny all incoming by default | ✅ ok | UFW default deny already configured |
+| Enable UFW | ✅ ok | Already active |
+| Install auditd | ✅ ok | Already installed |
+| Add SSH audit rule | ✅ changed | Audit rule for SSH auth events added |
+| Add root command audit rule | ✅ changed | All root commands now logged |
+| Set password max days = 90 | ✅ changed | `/etc/login.defs: PASS_MAX_DAYS 90` |
+
+**Ansible play recap:** `ok=11  changed=8  failed=0`
+
+---
+
+## Module 4 Results Summary
+
+| Tool | Test | Result |
+|------|------|--------|
+| OPA | Insecure infrastructure | ❌ 7 violations blocked |
+| OPA | Secure infrastructure | ✅ 0 violations — approved |
+| Sentinel | Insecure infrastructure | ❌ 3 policies failed |
+| Sentinel | Secure infrastructure | ✅ 3 policies passed |
+| Ansible | Real EC2 hardening | ✅ 8 security changes applied |
+
+---
+
+## Exam Objective Coverage
+
+| Topic 97 Objective | How Module 4 Satisfies It |
+|--------------------|--------------------------|
+| d-i: Automated security architecture review and design validation | OPA evaluates infrastructure JSON and returns violation messages |
+| d-ii: Cloud security pattern enforcement and architecture compliance | Sentinel hard-mandatory policies enforce patterns across all Terraform code |
+| d-iii: Security gate automation for cloud deployment pipelines | OPA + Sentinel sit as pre-deployment gates; Ansible provides post-deploy hardening |
+
+---
+
+*Module 4 of 6 — Enterprise Cloud Security Operations Platform*

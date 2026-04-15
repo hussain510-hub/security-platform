@@ -26,7 +26,7 @@ A comprehensive, production-grade multi-cloud security operations platform cover
 
 This platform solves a real enterprise problem: **how do you continuously govern, monitor, and secure multi-cloud infrastructure at scale?**
 
-Most organisations use cloud services across AWS and Azure simultaneously. Without a unified security platform, teams end up with blind spots — undetected misconfigurations, unchecked compliance gaps, unknown identity risks, and no single executive view of posture. This platform addresses all of that in six integrated modules.
+Most organizations use cloud services across AWS and Azure simultaneously. Without a unified security platform, teams end up with blind spots — undetected misconfigurations, unchecked compliance gaps, unknown identity risks, and no single executive view of posture. This platform addresses all of that in six integrated modules.
 
 ```
 PROBLEM:  Multi-cloud = multiple tools, no unified view, manual compliance checks
@@ -38,18 +38,12 @@ SOLUTION: One integrated platform — automated scanning → compliance → risk
 ## High-Level Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                    ENTERPRISE CLOUD SECURITY OPERATIONS PLATFORM            │
-│                         GitHub Codespace (Python 3.12)                      │
-└──────────────────────────────┬──────────────────────────────────────────────┘
-                               │
-              ┌────────────────┴────────────────┐
-              │                                 │
-    ┌─────────▼──────────┐           ┌──────────▼─────────┐
+
+    ┌─────────▼──────────┐           ┌───────────▼─────────┐
     │     AWS Account    │           │    Azure Account    │
     │   (eu-north-1)     │           │   (eu-north-1)      │
     │  IAM User: sec-user│           │  CLI Authentication │
-    └────────────────────┘           └────────────────────┘
+    └────────────────────┘           └─────────────────────┘
               │                                 │
               └─────────────────────────────────┘
                                │
@@ -157,10 +151,6 @@ SOLUTION: One integrated platform — automated scanning → compliance → risk
 | IAM Analysis | Custom Python | 3.12 | Privilege escalation detection |
 | Dashboard | HTML/CSS/JS | — | Executive reporting |
 
-### Development Environment
-- **Platform:** GitHub Codespace
-- **Base Image:** `mcr.microsoft.com/devcontainers/python:3.12`
-- **Config:** `.devcontainer/devcontainer.json` (auto-installs all tools)
 
 ---
 
@@ -206,47 +196,48 @@ export AWS_DEFAULT_REGION=eu-north-1
 
 ## Quick Start
 
-```bash
+```
 # 1. Clone the repository
 git clone https://github.com/your-username/security-platform
 cd security-platform
 
-# 2. Open in GitHub Codespace
-# (devcontainer.json auto-installs all tools)
-
-# 3. Authenticate to clouds
+# 2. Authenticate to clouds
 aws configure
 az login
 
-# 4. Run Module 1 — Scan everything
-cd module1-cloud-governance
-prowler aws --compliance gdpr_aws
+# 3. Module 1 — Scan everything
+prowler aws --region eu-north-1 --output-formats html json-ocsf \
+  --output-directory module1-cloud-governance/aws/prowler/
+scout aws --report-dir module1-cloud-governance/aws/scoutsuite/
+custodian run --output-dir module1-cloud-governance/cloud-custodian/output \
+  module1-cloud-governance/cloud-custodian/policies.yml --region eu-north-1
 
-# 5. Run Module 2 — Deploy compliance monitoring
-cd ../module2-compliance
-bash aws-config/enable-config-rules.sh
-bash azure-policy/deploy-azure-policies.sh
+# 4. Module 2 — Deploy compliance monitoring
+bash module2-automated-compliance/aws-config/enable-config-rules.sh
+bash module2-automated-compliance/azure-policy/deploy-azure-policies.sh
 
-# 6. Run Module 3 — Score risks
-cd ../module3-risk
-python scripts/combine_prowler.py
-python scripts/risk_engine.py
-python scripts/bia_report.py
+# 5. Module 3 — Score risks
+cd module3-risk-management/scripts
+python combine_prowler.py
+python risk_engine.py
+python bia_report.py
 
-# 7. Run Module 4 — Validate architecture
-cd ../module4-architecture
-opa eval -d opa/policies/ -i opa/test/insecure-input.json "data.security"
-ansible-playbook ansible/hardening-playbook.yml -i <ec2-ip>,
+# 6. Module 4 — Validate architecture
+opa eval --data module4-architecture-validation/opa/policies/ \
+  --input module4-architecture-validation/opa/insecure-input.json \
+  --format pretty "data.aws.s3.security.deny"
+ansible-playbook module4-architecture-validation/ansible/hardening-playbook.yml \
+  --inventory "51.20.34.243," --user ubuntu --private-key lab-key.pem -v
 
-# 8. Run Module 5 — Analyse IAM
-cd ../module5-iam
-python privilege_escalation_detector.py
-python access_optimization.py
-python azure_iam_analysis.py
-python iam_governance_report.py
+# 7. Module 5 — Analyse IAM
+cd module5-iam-governance
+python3 privilege_escalation_remediation.py
+python3 access_optimization.py
+python3 azure_iam_analysis.py
+python3 iam_governance_report.py
 
-# 9. View Module 6 — Executive Dashboard
-open module6-dashboard/dashboard.html
+# 8. Module 6 — View executive dashboard
+open module6-executive-dashboard/dashboard_clean.html
 ```
 
 ---
@@ -256,46 +247,103 @@ open module6-dashboard/dashboard.html
 ```
 security-platform/
 │
+├── EULA.txt
 ├── README.md                              ← You are here
-│
-├── .devcontainer/
-│   └── devcontainer.json                  ← Auto-installs all tools
+├── TermsOfEvaluation.txt
+├── setup.sh
 │
 ├── module1-cloud-governance/
 │   ├── README.md
-│   ├── prowler-output/                    ← CSV scan results (AWS + Azure)
-│   ├── scoutsuite-report/                 ← HTML visual report
-│   └── cloud-custodian/                   ← Policy YAML files
+│   ├── aws/
+│   │   ├── prowler/
+│   │   │   ├── compliance/                ← 43 CSV compliance scan results (AWS)
+│   │   │   └── prowler-output-334960985321-20260406192144.html
+│   │   └── scoutsuite/
+│   │       └── aws-334960985321.html      ← Visual HTML report
+│   ├── azure/
+│   │   └── prowler/
+│   │       ├── compliance/                ← 19 CSV compliance scan results (Azure)
+│   │       └── prowler-output-muhammadhussainzahid5gmail.onmicrosoft.com-20260407152107.html
+│   ├── cloud-custodian/
+│   │   ├── output/                        ← IAM / S3 / SG scan results
+│   │   │   ├── iam-users-no-mfa/
+│   │   │   ├── s3-public-buckets/
+│   │   │   └── security-groups-open-ssh/
+│   │   ├── remediation-output/            ← Post-remediation scan results
+│   │   │   ├── iam-users-no-mfa-remediate/
+│   │   │   ├── s3-public-buckets-remediate/
+│   │   │   └── security-groups-open-ssh-remediate/
+│   │   ├── policies.yml
+│   │   └── policies-remediation.yml
+│   └── scripts/
+│       ├── run-cloud-custodian.sh
+│       ├── run-prowler.sh
+│       └── run-scoutsuite.sh
 │
 ├── module2-automated-compliance/
 │   ├── README.md
 │   ├── aws-config/
+│   │   └── enable-config-rules.sh
 │   ├── azure-policy/
+│   │   ├── allowed-locations-policy.json
+│   │   ├── deploy-azure-policies.sh
+│   │   ├── policy-assignments.json
+│   │   ├── require-https-storage.json
+│   │   └── require-tags-policy.json
+│   ├── cloud-custodian/
 │   └── reports/                           ← GDPR / ISO27001 / PCI-DSS reports
+│       ├── aws-config-compliance.json
+│       ├── gdpr-compliance-report.md
+│       ├── iso27001-compliance-report.md
+│       └── pci-dss-compliance-report.md
 │
-├── module3-risk/
+├── module3-risk-management/
 │   ├── README.md
-│   ├── input/                             ← prowler_combined.csv
+│   ├── input/
+│   │   └── prowler_combined.csv
 │   ├── output/                            ← risk_report.csv, top_10_risks.csv, bia_report.csv
-│   └── scripts/                           ← combine_prowler.py, risk_engine.py, bia_report.py
+│   │   ├── bia_report.csv
+│   │   ├── risk_report.csv
+│   │   └── top_10_risks.csv
+│   └── scripts/
+│       ├── bia_report.py
+│       ├── combine_prowler.py
+│       └── risk_engine.py
 │
-├── module4-architecture/
+├── module4-architecture-validation/
 │   ├── README.md
-│   ├── opa/                               ← OPA Rego policies + test inputs
-│   ├── sentinel/                          ← Sentinel policies + test plans
-│   ├── terraform/                         ← Secure + insecure infra examples
-│   ├── ansible/                           ← Hardening playbook
-│   └── reports/                           ← Validation reports
+│   ├── ansible/
+│   │   └── hardening-playbook.yml
+│   ├── opa/
+│   │   ├── policies/                      ← Rego policies (encryption, S3, SG)
+│   │   └── test/                          ← Secure + insecure test inputs
+│   ├── sentinel/
+│   │   ├── policies/                      ← Sentinel policies (encryption, network, S3)
+│   │   ├── sentinel.hcl
+│   │   └── test/                          ← Secure + insecure Terraform plans
+│   ├── terraform/
+│   │   ├── insecure-infra.tf
+│   │   └── secure-infra.tf
+│   └── reports/                           ← Validation reports (OPA, Sentinel, Ansible)
+│       ├── ansible-hardening-report-ec2.txt
+│       ├── module4-summary.txt
+│       ├── opa-validation-report.txt
+│       └── sentinel-validation-report.txt
 │
-├── module5-iam/
+├── module5-iam-governance/
 │   ├── README.md
-│   ├── privilege_escalation_detector.py
+│   ├── privilege_escalation_remediation.py
 │   ├── access_optimization.py
 │   ├── azure_iam_analysis.py
 │   ├── iam_governance_report.py
-│   └── *.txt                              ← Finding reports
+│   ├── access_optimization_findings.txt
+│   ├── azure_iam_findings.txt
+│   ├── credential_report.csv
+│   ├── iam_governance_report.txt
+│   ├── post_remediation_report.txt
+│   └── remediation_report.txt
 │
-└── module6-dashboard/
+└── module6-executive-dashboard/
     ├── README.md
     └── dashboard.html                     ← Executive HTML dashboard
 ```

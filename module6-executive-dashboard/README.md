@@ -180,8 +180,6 @@ cd module6-dashboard
 python -m http.server 8080
 # Then visit: http://localhost:8080/dashboard.html
 
-# Option 3 — In GitHub Codespace
-# Right-click dashboard.html → Open with Live Server
 ```
 
 ---
@@ -200,17 +198,6 @@ The dashboard includes an appendix mapping each finding to its specific control 
 | ISO 27017 | CLD.12.1.3 | Capacity management | No auto-scaling policies |
 
 ---
-
-## Design Decisions
-
-**Why a single HTML file?**
-A single `.html` file requires no server, no database, and no dependencies. It can be opened on any laptop, shared by email, or embedded in a presentation — exactly what an executive dashboard needs to be.
-
-**Why not a live dashboard (e.g., Grafana)?**
-The scope of this project is a practical demonstration and oral assessment. A static HTML dashboard fully demonstrates the data aggregation, compliance mapping, and visualisation capabilities without requiring additional infrastructure to be running during the exam.
-
-**Why HTML over PDF?**
-HTML allows interactive elements (clickable risk rows, expandable sections, framework filters) that a static PDF cannot provide. It also renders identically in any browser without formatting issues.
 
 ---
 
