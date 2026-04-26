@@ -8,11 +8,11 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 :root{
-  --bg:#f4f6fa;
+  --bg:#f8f9fb;
   --sidebar:#1a2235;
   --sidebar2:#232e45;
   --card:#ffffff;
-  --border:#e2e8f0;
+  --border:#d4d8e0;
   --text:#1a2235;
   --sub:#64748b;
   --mono:'JetBrains Mono',monospace;
@@ -30,9 +30,12 @@
   --blue-bg:#eff6ff;
   --blue-bd:#bfdbfe;
   --sw:230px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg:0 8px 24px rgba(0,0,0,0.10);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
 
 /* SIDEBAR */
 aside{width:var(--sw);background:var(--sidebar);display:flex;flex-direction:column;padding:0;position:sticky;top:0;height:100vh;overflow-y:auto;overflow-x:hidden;flex-shrink:0;}
@@ -53,8 +56,8 @@ nav a.on{color:#fff;background:rgba(255,255,255,.08);border-left-color:#3b82f6;}
 .sf span{color:rgba(255,255,255,.65);}
 
 /* MAIN */
-main{flex:1;padding:28px 32px;overflow-x:hidden;}
-.ph{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;padding-bottom:18px;border-bottom:2px solid var(--border);}
+main{flex:1;padding:36px 40px;overflow-x:hidden;}
+.ph{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border);}
 .pt{font-size:20px;font-weight:600;margin-bottom:4px;color:var(--text);}
 .ps{font-size:11px;color:var(--sub);font-family:var(--mono);}
 .bdg{font-family:var(--mono);font-size:10px;padding:4px 10px;border-radius:20px;font-weight:500;letter-spacing:.03em;}
@@ -63,37 +66,40 @@ main{flex:1;padding:28px 32px;overflow-x:hidden;}
 .b-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd);}
 
 /* SECTION LABEL */
-.sl{font-size:11px;font-weight:600;color:var(--sub);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;margin-top:4px;}
+.sl{font-size:11px;font-weight:600;color:var(--sub);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;margin-top:8px;display:block;}
 
 /* EXEC BOX */
-.eb{background:var(--blue-bg);border:1px solid var(--blue-bd);border-left:4px solid var(--blue);border-radius:8px;padding:16px 20px;margin-bottom:22px;}
-.eb h3{font-size:10px;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:8px;font-weight:500;}
-.eb p{font-size:13px;line-height:1.8;color:#1e3a5f;}
+.eb{background:var(--blue-bg);border:1.5px solid var(--blue-bd);border-left:4px solid var(--blue);border-radius:10px;padding:16px 20px;margin-bottom:28px;box-shadow:var(--shadow-sm);}
+.eb h3{font-size:10px;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:10px;font-weight:700;}
+.eb p{font-size:14px;line-height:1.8;color:#1e3a5f;}
 
 /* KPI GRID */
-.kg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:22px;}
-.kc{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;border-top:3px solid transparent;}
+.kg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:28px;}
+.kc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 22px;border-top:3px solid transparent;box-shadow:var(--shadow-md);transition:all 0.2s ease;}
+.kc:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
 .kc.re{border-top-color:var(--red);}
 .kc.wa{border-top-color:var(--warn);}
 .kc.gr{border-top-color:var(--green);}
 .kc.bl{border-top-color:var(--blue);}
-.kl{font-size:10px;color:var(--sub);font-family:var(--mono);letter-spacing:.06em;margin-bottom:7px;text-transform:uppercase;}
-.kv{font-size:30px;font-weight:300;line-height:1;margin-bottom:5px;}
-.ks{font-size:11px;color:var(--sub);}
+.kl{font-size:10px;color:var(--sub);font-family:var(--mono);letter-spacing:.08em;margin-bottom:10px;text-transform:uppercase;font-weight:600;}
+.kv{font-size:32px;font-weight:300;line-height:1;margin-bottom:8px;color:var(--text);}
+.ks{font-size:12px;color:var(--sub);line-height:1.5;}
 
 /* LAYOUT */
-.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:20px;}
-.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
-.ct{font-size:10px;font-weight:600;font-family:var(--mono);letter-spacing:.08em;color:var(--sub);text-transform:uppercase;margin-bottom:14px;}
-.full{margin-bottom:20px;}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:28px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 24px;box-shadow:var(--shadow-md);transition:all 0.2s ease;}
+.card:hover{box-shadow:var(--shadow-lg);}
+.ct{font-size:10px;font-weight:600;font-family:var(--mono);letter-spacing:.08em;color:var(--sub);text-transform:uppercase;margin-bottom:16px;display:block;padding-bottom:12px;border-bottom:1px solid #f1f5f9;}
+.full{margin-bottom:28px;}
 
 /* COMPLIANCE BARS */
-.ci{margin-bottom:13px;}
-.cr{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
-.cn{font-size:12px;font-weight:500;color:var(--text);}
-.cp{font-family:var(--mono);font-size:12px;font-weight:500;}
-.bt{height:6px;background:#e2e8f0;border-radius:4px;overflow:hidden;}
-.bf{height:100%;border-radius:4px;}
+.ci{margin-bottom:16px;padding:8px 0;transition:all 0.2s ease;}
+.ci:hover{padding-left:4px;}
+.cr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.cn{font-size:13px;font-weight:500;color:var(--text);}
+.cp{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--sub);}
+.bt{height:10px;background:#e8eef5;border-radius:6px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.05);}
+.bf{height:100%;border-radius:6px;transition:width 0.3s ease;}
 
 /* RING */
 .rw{display:flex;align-items:center;gap:20px;}
@@ -109,51 +115,67 @@ main{flex:1;padding:28px 32px;overflow-x:hidden;}
 
 /* RISK TABLE */
 .rt{width:100%;border-collapse:collapse;}
-.rt th{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--sub);text-transform:uppercase;padding:0 6px 9px 0;text-align:left;border-bottom:2px solid var(--border);}
-.rt td{padding:8px 6px 8px 0;font-size:12px;border-bottom:1px solid #f1f5f9;vertical-align:top;color:var(--text);}
+.rt th{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--sub);text-transform:uppercase;padding:10px 8px 12px 0;text-align:left;border-bottom:2px solid var(--border);font-weight:700;}
+.rt td{padding:10px 8px 10px 0;font-size:12px;border-bottom:1px solid #f1f5f9;vertical-align:top;color:var(--text);}
+.rt tr:nth-child(even) td{background-color:rgba(100,116,139,0.02);}
+.rt tr:hover td{background-color:rgba(100,116,139,0.04);}
 .rt tr:last-child td{border:none;}
 
 /* SEVERITY BADGES */
-.sv{display:inline-block;font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500;}
-.sc{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd);}
-.sh{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd);}
-.sm{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd);}
-.sg2{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd);}
+.sv{display:inline-block;font-family:var(--mono);font-size:10px;padding:4px 10px;border-radius:6px;font-weight:600;letter-spacing:.03em;box-shadow:var(--shadow-sm);}
+.sc{background:var(--red-bg);color:var(--red);border:1.5px solid var(--red-bd);}
+.sh{background:var(--warn-bg);color:var(--warn);border:1.5px solid var(--warn-bd);}
+.sm{background:var(--blue-bg);color:var(--blue);border:1.5px solid var(--blue-bd);}
+.sg2{background:var(--green-bg);color:var(--green);border:1.5px solid var(--green-bd);}
 
 /* IAM FINDINGS */
-.fi{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #f1f5f9;align-items:flex-start;}
+.fi{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #f1f5f9;align-items:flex-start;border-left:4px solid transparent;padding-left:12px;margin-left:-12px;transition:all 0.2s ease;}
+.fi:hover{background-color:rgba(100,116,139,0.03);border-left-color:currentColor;}
 .fi:last-child{border:none;}
-.fic{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;font-weight:700;}
-.fir{background:var(--red-bg);color:var(--red);}
-.fiw{background:var(--warn-bg);color:var(--warn);}
-.fib{background:var(--blue-bg);color:var(--blue);}
+.fic{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;font-weight:700;box-shadow:var(--shadow-sm);}
+.fir{background:var(--red-bg);color:var(--red);border-left-color:var(--red);}
+.fiw{background:var(--warn-bg);color:var(--warn);border-left-color:var(--warn);}
+.fib{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue);}
+.fig{background:var(--green-bg);color:var(--green);border-left-color:var(--green);}
 .ft{flex:1;}
-.ft-t{font-size:12px;font-weight:500;margin-bottom:2px;color:var(--text);}
-.ft-d{font-size:11px;color:var(--sub);line-height:1.5;}
-.fc{font-family:var(--mono);font-size:12px;font-weight:600;white-space:nowrap;}
+.ft-t{font-size:13px;font-weight:600;margin-bottom:3px;color:var(--text);}
+.ft-d{font-size:12px;color:var(--sub);line-height:1.6;}
+.fc{font-family:var(--mono);font-size:11px;font-weight:600;white-space:nowrap;color:var(--sub);}
+
+/* REMEDIATION TAG */
+.rem-tag{display:inline-block;font-family:var(--mono);font-size:9px;padding:1px 6px;border-radius:3px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd);margin-left:5px;font-weight:500;}
 
 /* FRAMEWORK TABLE */
 .fw{width:100%;border-collapse:collapse;font-size:12px;}
-.fw th{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--sub);text-transform:uppercase;padding:0 10px 9px 0;text-align:left;border-bottom:2px solid var(--border);white-space:nowrap;}
-.fw td{padding:8px 10px 8px 0;border-bottom:1px solid #f1f5f9;vertical-align:top;color:var(--text);}
+.fw th{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--sub);text-transform:uppercase;padding:10px 12px 12px 0;text-align:left;border-bottom:2px solid var(--border);white-space:nowrap;font-weight:700;}
+.fw td{padding:10px 12px 10px 0;border-bottom:1px solid #f1f5f9;vertical-align:top;color:var(--text);}
+.fw tr:nth-child(even) td{background-color:rgba(100,116,139,0.02);}
+.fw tr:hover td{background-color:rgba(100,116,139,0.04);}
 .fw tr:last-child td{border:none;}
-.sd{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:middle;}
+.sd{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle;box-shadow:var(--shadow-sm);}
 .dp{background:var(--green);}
 .dw{background:var(--warn);}
 .df{background:var(--red);}
 
 /* OPA ROWS */
-.or{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f1f5f9;font-size:12px;color:var(--text);}
+.or{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:12px;color:var(--text);transition:all 0.2s ease;}
+.or:nth-child(even){background-color:rgba(100,116,139,0.02);}
+.or:hover{background-color:rgba(100,116,139,0.04);}
 .or:last-child{border:none;}
-.ot{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:4px;font-weight:500;}
-.op{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd);}
-.of{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd);}
+.ot{font-family:var(--mono);font-size:10px;padding:3px 10px;border-radius:6px;font-weight:600;box-shadow:var(--shadow-sm);}
+.op{background:var(--green-bg);color:var(--green);border:1.5px solid var(--green-bd);}
+.of{background:var(--red-bg);color:var(--red);border:1.5px solid var(--red-bd);}
 
 /* METRIC MINI CARDS */
 .mg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px;}
 .mc{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:10px 12px;text-align:center;}
 .mn{font-size:20px;font-weight:500;margin-bottom:2px;}
 .ml{font-size:10px;font-family:var(--mono);color:var(--sub);}
+
+/* BIA */
+.bia-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:0;border-bottom:1px solid #f1f5f9;padding:7px 0;font-size:12px;align-items:center;}
+.bia-row:last-child{border:none;}
+.bia-head{font-family:var(--mono);font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;padding-bottom:8px;border-bottom:2px solid var(--border);}
 
 /* PROVIDER BARS */
 .ps2{display:flex;gap:8px;margin-top:10px;}
@@ -198,7 +220,7 @@ canvas{display:block;}
     <a><span class="nd" style="background:#10b981;opacity:1;"></span>M2 — Compliance</a>
     <a><span class="nd" style="background:#10b981;opacity:1;"></span>M3 — Risk (FAIR)</a>
     <a><span class="nd" style="background:#10b981;opacity:1;"></span>M4 — Architecture</a>
-    <a><span class="nd" style="background:#10b981;opacity:1;"></span>M5 — IAM</a>
+    <a><span class="nd" style="background:#10b981;opacity:1;"></span>M5 — IAM Governance</a>
   </nav>
 
   <div class="sf">
@@ -217,25 +239,26 @@ canvas{display:block;}
   <div class="ph">
     <div>
       <div class="pt">Enterprise Cloud Security — Executive Dashboard</div>
-      <div class="ps">Prowler · AWS Config · Azure Policy · OPA · Sentinel · Custom IAM · AWS + Azure · 09 Apr 2026</div>
+      <div class="ps">Prowler · ScoutSuite · AWS Config · Azure Policy · OPA · Sentinel · Cloud Custodian · Custom IAM · 09 Apr 2026</div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;">
       <span class="bdg b-red">&#9679; Critical Risk</span>
+      <span class="bdg b-blue">All 5 Modules</span>
     </div>
   </div>
 
   <!-- EXEC SUMMARY -->
   <div class="eb">
-    <h3>Executive Summary — All 5 Modules</h3>
+    <h3>Executive Summary — All 5 Modules Complete</h3>
     <p>
       A comprehensive multi-cloud security assessment was conducted across <strong>AWS (334960985321, eu-north-1)</strong> and <strong>Azure (4db9fc14)</strong>
-      using Prowler, Cloud Custodian, AWS Config, Azure Policy, OPA, Terraform Sentinel, and custom Python IAM scripts.
-      Out of <strong>12,608 Prowler checks</strong>, only <strong style="color:var(--green)">3,754 passed (39.4%)</strong> with <strong style="color:var(--red)">5,774 failing (45.8%)</strong>.
-      Framework compliance is critically low: <strong style="color:var(--red)">GDPR 40%</strong>, <strong style="color:var(--red)">ISO 27001 43%</strong>, <strong style="color:var(--warn)">PCI-DSS 50%</strong>.
+      using Prowler, ScoutSuite, Cloud Custodian, AWS Config, Azure Policy, OPA, Terraform Sentinel, and custom Python IAM scripts.
+      Out of <strong>12,608 Prowler checks</strong>, only <strong style="color:var(--green)">3,754 passed (29.8%)</strong> with <strong style="color:var(--red)">5,774 failing (45.8%)</strong> and 3,080 manual.
+      Framework compliance is critically low: <strong style="color:var(--red)">GDPR 40%</strong>, <strong style="color:var(--red)">ISO 27001 43%</strong>, <strong style="color:var(--warn)">PCI-DSS 50%</strong>, <strong style="color:var(--warn)">SOC2 44%</strong>.
       All top 10 FAIR risks are EC2-based with a combined ALE of <strong style="color:var(--red)">$25.5M</strong> — open SSH/RDP NACLs and unencrypted EBS volumes.
-      IAM is the most critical failure: <strong style="color:var(--red)">9/9 AWS users have no MFA</strong>, 7 are ghost accounts, and svc-backup has a full privilege escalation chain.
+      IAM is the most critical failure: <strong style="color:var(--red)">9/9 AWS users have no MFA</strong>, 7 are ghost accounts, and svc-backup has a full privilege escalation chain — now remediated.
       Architecture gate controls (OPA + Sentinel) successfully <strong style="color:var(--green)">blocked 7 insecure deployments</strong>.
-      Immediate remediation of CloudTrail, MFA, EBS encryption, and SSH NACLs is required.
+      Cloud Custodian auto-remediation revoked SSH rules on <strong style="color:var(--green)">8 security groups</strong>.
     </p>
   </div>
 
@@ -255,7 +278,7 @@ canvas{display:block;}
     <div class="kc wa">
       <div class="kl">Avg Compliance</div>
       <div class="kv" style="color:var(--warn)">44<span style="font-size:16px;color:var(--sub)">%</span></div>
-      <div class="ks">GDPR 40 · ISO 43 · PCI 50</div>
+      <div class="ks">GDPR 40 · ISO 43 · PCI 50 · SOC2 44</div>
     </div>
     <div class="kc re">
       <div class="kl">FAIR Total ALE</div>
@@ -268,7 +291,6 @@ canvas{display:block;}
   <div class="g2">
     <div class="card">
       <div class="ct">Module 2 — compliance by framework</div>
-
       <div class="ci">
         <div class="cr"><span class="cn">GDPR (Articles 5, 17, 25, 32, 44)</span><span class="cp" style="color:var(--red)">40%</span></div>
         <div class="bt"><div class="bf" style="width:40%;background:var(--red)"></div></div>
@@ -285,7 +307,6 @@ canvas{display:block;}
         <div class="cr"><span class="cn">SOC2 (Prowler checks)</span><span class="cp" style="color:var(--warn)">44%</span></div>
         <div class="bt"><div class="bf" style="width:44%;background:var(--warn)"></div></div>
       </div>
-
       <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);">
         <div class="ct" style="margin-bottom:8px;">Prowler — 12,608 total checks</div>
         <div class="ps2">
@@ -302,7 +323,6 @@ canvas{display:block;}
             <div class="bt"><div class="bf" style="width:100%;background:#94a3b8"></div></div>
           </div>
         </div>
-
         <div style="margin-top:13px;padding:10px 12px;background:var(--bg);border-radius:7px;border:1px solid var(--border);">
           <div style="font-size:10px;font-family:var(--mono);color:var(--sub);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em;">AWS Config — 3 rules</div>
           <div style="font-size:12px;line-height:2;">
@@ -357,36 +377,12 @@ canvas{display:block;}
       <table class="rt">
         <thead><tr><th style="width:60%">EC2 Finding</th><th>Severity</th><th>ALE</th></tr></thead>
         <tbody>
-          <tr>
-            <td>EBS encryption disabled at account level</td>
-            <td><span class="sv sc">CRIT</span></td>
-            <td style="font-family:var(--mono);color:var(--red);font-size:11px;">$2.55M</td>
-          </tr>
-          <tr>
-            <td>EBS volumes in use — not encrypted</td>
-            <td><span class="sv sc">CRIT</span></td>
-            <td style="font-family:var(--mono);color:var(--red);font-size:11px;">$2.55M</td>
-          </tr>
-          <tr>
-            <td>EBS volumes not covered by backup plan</td>
-            <td><span class="sv sc">CRIT</span></td>
-            <td style="font-family:var(--mono);color:var(--red);font-size:11px;">$2.55M</td>
-          </tr>
-          <tr>
-            <td>NACL allows SSH/RDP from 0.0.0.0/0 (×4)</td>
-            <td><span class="sv sc">CRIT</span></td>
-            <td style="font-family:var(--mono);color:var(--red);font-size:11px;">$2.55M ×4</td>
-          </tr>
-          <tr>
-            <td>Security group: port 22 open to world</td>
-            <td><span class="sv sc">CRIT</span></td>
-            <td style="font-family:var(--mono);color:var(--red);font-size:11px;">$2.55M</td>
-          </tr>
-          <tr>
-            <td>AWS Inspector not enabled</td>
-            <td><span class="sv sc">CRIT</span></td>
-            <td style="font-family:var(--mono);color:var(--red);font-size:11px;">$2.55M</td>
-          </tr>
+          <tr><td>EBS encryption disabled at account level</td><td><span class="sv sc">CRIT</span></td><td style="font-family:var(--mono);color:var(--red);font-size:11px;">$2.55M</td></tr>
+          <tr><td>EBS volumes in use — not encrypted</td><td><span class="sv sc">CRIT</span></td><td style="font-family:var(--mono);color:var(--red);font-size:11px;">$2.55M</td></tr>
+          <tr><td>EBS volumes not covered by backup plan</td><td><span class="sv sc">CRIT</span></td><td style="font-family:var(--mono);color:var(--red);font-size:11px;">$2.55M</td></tr>
+          <tr><td>NACL allows SSH/RDP from 0.0.0.0/0 (×4)</td><td><span class="sv sc">CRIT</span></td><td style="font-family:var(--mono);color:var(--red);font-size:11px;">$2.55M ×4</td></tr>
+          <tr><td>Security group: port 22 open to world</td><td><span class="sv sc">CRIT</span></td><td style="font-family:var(--mono);color:var(--red);font-size:11px;">$2.55M</td></tr>
+          <tr><td>AWS Inspector not enabled</td><td><span class="sv sc">CRIT</span></td><td style="font-family:var(--mono);color:var(--red);font-size:11px;">$2.55M</td></tr>
         </tbody>
       </table>
       <div style="margin-top:10px;padding:8px 12px;background:var(--red-bg);border:1px solid var(--red-bd);border-radius:6px;font-size:11px;color:var(--red);font-family:var(--mono);">
@@ -394,15 +390,11 @@ canvas{display:block;}
       </div>
       <div style="margin-top:14px;">
         <div class="ct" style="margin-bottom:8px;">BIA — critical business assets</div>
-        <table class="rt" style="font-size:11px;">
-          <thead><tr><th>Asset</th><th>Criticality</th><th>Max Exposure</th></tr></thead>
-          <tbody>
-            <tr><td>Customer Data Storage (S3)</td><td><span class="sv sc">CRIT</span></td><td style="font-family:var(--mono);color:var(--red);">$1.2M</td></tr>
-            <tr><td>Azure Virtual Machines</td><td><span class="sv sh">HIGH</span></td><td style="font-family:var(--mono);color:var(--warn);">$1.08M</td></tr>
-            <tr><td>AWS Production (eu-north-1)</td><td><span class="sv sc">CRIT</span></td><td style="font-family:var(--mono);color:var(--red);">$720K</td></tr>
-            <tr><td>Azure Storage (EU)</td><td><span class="sv sh">HIGH</span></td><td style="font-family:var(--mono);color:var(--warn);">$720K</td></tr>
-          </tbody>
-        </table>
+        <div class="bia-head bia-row"><span>Asset</span><span>Criticality</span><span>Max Exposure</span><span>Regulation</span></div>
+        <div class="bia-row"><span>Customer Data Storage (S3)</span><span><span class="sv sc">CRIT</span></span><span style="font-family:var(--mono);color:var(--red);">$1.2M</span><span style="font-size:11px;color:var(--sub)">GDPR, PCI</span></div>
+        <div class="bia-row"><span>Azure Virtual Machines</span><span><span class="sv sh">HIGH</span></span><span style="font-family:var(--mono);color:var(--warn);">$1.08M</span><span style="font-size:11px;color:var(--sub)">ISO27001</span></div>
+        <div class="bia-row"><span>AWS Production (eu-north-1)</span><span><span class="sv sc">CRIT</span></span><span style="font-family:var(--mono);color:var(--red);">$720K</span><span style="font-size:11px;color:var(--sub)">SOC2, ISO</span></div>
+        <div class="bia-row"><span>Azure Storage (EU)</span><span><span class="sv sh">HIGH</span></span><span style="font-family:var(--mono);color:var(--warn);">$720K</span><span style="font-size:11px;color:var(--sub)">GDPR</span></div>
       </div>
     </div>
 
@@ -411,18 +403,18 @@ canvas{display:block;}
       <div class="fi">
         <div class="fic fir">!!</div>
         <div class="ft">
-          <div class="ft-t">svc-backup — privilege escalation chain</div>
-          <div class="ft-d">iam:AttachUserPolicy + iam:CreateAccessKey + iam:CreateUser = full account takeover possible. CIS AWS 1.16</div>
+          <div class="ft-t">svc-backup — privilege escalation chain <span class="rem-tag">✓ Remediated</span></div>
+          <div class="ft-d">iam:AttachUserPolicy + iam:CreateAccessKey + iam:CreateUser = full account takeover. Policy detached, ReadOnlyAccess applied. CIS AWS 1.16</div>
         </div>
-        <div class="fc" style="color:var(--red)">CRIT</div>
+        <div class="fc" style="color:var(--green)">FIXED</div>
       </div>
       <div class="fi">
         <div class="fic fir">!!</div>
         <div class="ft">
-          <div class="ft-t">admin-dave — AdministratorAccess, no MFA, ghost</div>
-          <div class="ft-d">Wildcard (*) permission, MFA disabled, never logged in. Full account exposure if compromised.</div>
+          <div class="ft-t">admin-dave — AdministratorAccess, no MFA, ghost <span class="rem-tag">✓ Remediated</span></div>
+          <div class="ft-d">Wildcard (*) permission detached, ReadOnlyAccess applied. Never logged in. CIS AWS 1.16</div>
         </div>
-        <div class="fc" style="color:var(--red)">CRIT</div>
+        <div class="fc" style="color:var(--green)">FIXED</div>
       </div>
       <div class="fi">
         <div class="fic fir">!!</div>
@@ -459,7 +451,7 @@ canvas{display:block;}
       <div class="mg">
         <div class="mc"><div class="mn" style="color:var(--red)">36</div><div class="ml">IAM Score/100</div></div>
         <div class="mc"><div class="mn" style="color:var(--red)">9/9</div><div class="ml">No MFA</div></div>
-        <div class="mc"><div class="mn" style="color:var(--warn)">16</div><div class="ml">Total Issues</div></div>
+        <div class="mc"><div class="mn" style="color:var(--green)">2</div><div class="ml">Remediated</div></div>
       </div>
     </div>
   </div>
@@ -514,15 +506,18 @@ canvas{display:block;}
           <tr><td>IAM password policy — too weak</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">AWS 1.8</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">PR.AC-1</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">A.9.4.3</td><td><span class="sd df"></span><span style="color:var(--red);font-weight:500;">Fail</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">M2</td></tr>
           <tr><td>MFA not enabled — all 9 users</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">AWS 1.10</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">PR.AC-7</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">A.9.4.2</td><td><span class="sd df"></span><span style="color:var(--red);font-weight:500;">Fail</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">M5</td></tr>
           <tr><td>Ghost accounts — 7 users unused</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">AWS 1.12</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">PR.AC-1</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">A.9.2.5</td><td><span class="sd df"></span><span style="color:var(--red);font-weight:500;">Fail</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">M5</td></tr>
-          <tr><td>svc-backup privilege escalation</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">AWS 1.16</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">PR.AC-4</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">A.9.2.3</td><td><span class="sd df"></span><span style="color:var(--red);font-weight:500;">Fail</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">M5</td></tr>
+          <tr><td>svc-backup privilege escalation <span class="rem-tag">✓ Remediated</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">AWS 1.16</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">PR.AC-4</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">A.9.2.3</td><td><span class="sd dp"></span><span style="color:var(--green);font-weight:500;">Fixed</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">M5</td></tr>
+          <tr><td>admin-dave wildcard (*) policy <span class="rem-tag">✓ Remediated</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">AWS 1.16</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">PR.AC-4</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">A.9.2.3</td><td><span class="sd dp"></span><span style="color:var(--green);font-weight:500;">Fixed</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">M5</td></tr>
           <tr><td>EBS encryption disabled (EC2)</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">AWS 2.2.1</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">PR.DS-1</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">A.10.1.1</td><td><span class="sd df"></span><span style="color:var(--red);font-weight:500;">Fail</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">M3</td></tr>
           <tr><td>SSH/RDP NACLs open 0.0.0.0/0</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">AWS 5.1</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">PR.AC-5</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">A.13.1.1</td><td><span class="sd df"></span><span style="color:var(--red);font-weight:500;">Fail</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">M3</td></tr>
+          <tr><td>SSH security groups (×8) <span class="rem-tag">✓ Remediated</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">AWS 4.1</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">PR.IP-1</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">A.13.1.1</td><td><span class="sd dp"></span><span style="color:var(--green);font-weight:500;">Fixed</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">M1</td></tr>
           <tr><td>Azure Owner at subscription scope</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">Az 1.23</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">PR.AC-4</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">A.9.2.3</td><td><span class="sd df"></span><span style="color:var(--red);font-weight:500;">Fail</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">M5</td></tr>
           <tr><td>OPA blocks insecure deployments (7)</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">AWS 4.1/4.2</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">PR.IP-1</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">A.12.1.2</td><td><span class="sd dp"></span><span style="color:var(--green);font-weight:500;">Pass</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">M4</td></tr>
           <tr><td>Sentinel hard-mandatory policies</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">AWS 4.1</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">PR.IP-1</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">A.12.1.2</td><td><span class="sd dp"></span><span style="color:var(--green);font-weight:500;">Pass</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">M4</td></tr>
           <tr><td>Ansible hardening — SSH, UFW, auditd</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">CIS 5.2</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">PR.IP-1</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">A.12.4/12.6</td><td><span class="sd dp"></span><span style="color:var(--green);font-weight:500;">Pass</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">M4</td></tr>
           <tr><td>Azure tagging — asset management</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">Az 1.x</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">ID.AM-1</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">A.8.1.1</td><td><span class="sd dp"></span><span style="color:var(--green);font-weight:500;">Pass</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">M2</td></tr>
           <tr><td>Azure HTTPS policy — data in transit</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">Az 3.1</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">PR.DS-2</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">A.10.1.1</td><td><span class="sd dp"></span><span style="color:var(--green);font-weight:500;">Pass</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">M2</td></tr>
+          <tr><td>Azure EU-only region policy (GDPR Art.44)</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">Az 1.x</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">ID.GV-3</td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">A.18.1.4</td><td><span class="sd dp"></span><span style="color:var(--green);font-weight:500;">Pass</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--sub)">M2</td></tr>
         </tbody>
       </table>
     </div>
