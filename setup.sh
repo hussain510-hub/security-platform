@@ -39,7 +39,7 @@ echo "✅ Verifying installations..."
 terraform -version
 aws --version || echo "AWS CLI not installed or not in PATH"
 prowler --version || echo "Prowler OK"
-scout --help || echo "ScoutSuite OK"
+scout --version || echo "ScoutSuite OK"
 custodian version || echo "Cloud Custodian OK"
 ansible --version || echo "Ansible OK"
 opa version || echo "OPA OK"
