@@ -1,27 +1,48 @@
 #!/bin/bash
 
-echo "🚀 Starting DevSecOps setup..."
+set -e
 
-sudo apt-get update -y
-sudo apt-get install -y python3-pip python3-dev build-essential curl unzip git jq
+echo "🔄 Updating system..."
+sudo apt update -y
 
-pip3 install --upgrade pip
+echo "📦 Installing system dependencies..."
+sudo apt install -y python3-pip python3-venv git curl unzip gnupg
 
-pip3 install prowler scoutsuite ansible awscli azure-cli
+echo "🔧 Installing Terraform (HashiCorp official repo)..."
 
-pip3 install "c7n==0.9.38"
+sudo mkdir -p /usr/share/keyrings
 
-if ! command -v terraform &> /dev/null; then
-  curl -fsSL https://releases.hashicorp.com/terraform/1.7.5/terraform_1.7.5_linux_amd64.zip -o tf.zip
-  unzip tf.zip
-  sudo mv terraform /usr/local/bin/
-  rm tf.zip
-fi
+curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --batch --yes --dearmor -o /usr/share/keyrings/hashicorp.gpg
 
-if ! command -v opa &> /dev/null; then
-  curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static
-  chmod +x opa
-  sudo mv opa /usr/local/bin/
-fi
+echo "deb [signed-by=/usr/share/keyrings/hashicorp.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
 
-echo "✅ DevSecOps environment ready!"
+sudo apt update -y
+sudo apt install -y terraform
+
+echo "🐍 Creating virtual environment..."
+python3 -m venv venv
+
+echo "⬆️ Upgrading pip..."
+python3 -m pip install --upgrade pip
+
+echo "🛡️ Installing cloud security tools..."
+pip install prowler scoutsuite ansible --prefer-binary
+pip install "c7n==0.9.49"
+
+echo "🔐 Installing OPA (Open Policy Agent)..."
+curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static
+chmod +x opa
+sudo mv opa /usr/local/bin/
+
+echo "✅ Verifying installations..."
+
+terraform -version
+aws --version || echo "AWS CLI not installed or not in PATH"
+prowler --version || echo "Prowler OK"
+scout --help || echo "ScoutSuite OK"
+custodian version || echo "Cloud Custodian OK"
+ansible --version || echo "Ansible OK"
+opa version || echo "OPA OK"
+
+echo "🎉 Setup complete!"
+echo "👉 Activate Python environment manually when needed: source venv/bin/activate"

@@ -1,0 +1,13 @@
+{
+  "name": "Security Platform",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "hashicorp.terraform"
+      ]
+    }
+  },
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y curl unzip jq && pip install --upgrade pip awscli azure-cli"
+}
