@@ -1,14 +1,20 @@
 {
-  "name": "Security Platform",
-  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "name": "DevSecOps Lab",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-python.python",
-        "hashicorp.terraform"
+        "ms-azuretools.vscode-docker",
+        "hashicorp.terraform",
+        "ms-python.python"
       ]
     }
   },
-  "postCreateCommand": "apt-get update && apt-get install -y curl unzip jq && \
-    pip install --upgrade pip awscli azure-cli"
+
+  "remoteUser": "vscode"
 }
