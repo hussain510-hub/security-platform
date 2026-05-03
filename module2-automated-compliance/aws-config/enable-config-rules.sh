@@ -89,3 +89,7 @@ aws configservice put-config-rule \
 
 echo "Done! AWS Config is now monitoring your account."
 aws configservice describe-configuration-recorder-status --region ${REGION}
+
+echo "Step 9: Checking compliance status..."
+aws configservice describe-compliance-by-config-rule \
+  --region ${REGION}

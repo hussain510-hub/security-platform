@@ -1,38 +1,72 @@
-=== OPA Security Validation Report ===
-Date: Wed Apr  8 15:08:35 UTC 2026
-
-=== INSECURE INFRASTRUCTURE RESULTS ===
-
---- S3 Security Check ---
 [
   "BLOCKED: S3 bucket 'insecure_bucket' has public-read ACL. Violates GDPR Article 32 and CIS AWS 2.1.5"
 ]
-
---- Network Security Check ---
 [
   "BLOCKED: Security group 'insecure_sg' allows RDP (port 3389) from anywhere. Violates CIS AWS 4.2",
   "BLOCKED: Security group 'insecure_sg' allows SSH (port 22) from anywhere. Violates CIS AWS 4.1 and PCI-DSS Req 1"
 ]
-
---- Encryption Check ---
 [
   "BLOCKED: EBS volume 'insecure_volume' is not encrypted. Violates GDPR Article 32 and PCI-DSS Req 3",
   "BLOCKED: RDS database 'insecure_db' storage is not encrypted. Violates GDPR Article 32 and ISO27001 A.10.1",
   "BLOCKED: S3 bucket 'insecure_bucket' has no server-side encryption. Violates PCI-DSS Req 3 and GDPR Article 32",
   "BLOCKED: S3 bucket 'no_versioning_bucket' has no server-side encryption. Violates PCI-DSS Req 3 and GDPR Article 32"
 ]
-
-=== SECURE INFRASTRUCTURE RESULTS ===
-
---- S3 Security Check ---
 []
+[0m[1mInitializing provider plugins found in the configuration...[0m
+- Finding hashicorp/aws versions matching "~> 5.0"...
+- Installing hashicorp/aws v5.100.0...
+- Installed hashicorp/aws v5.100.0 (signed by HashiCorp)
 
---- Network Security Check ---
-[]
+[0m[1mInitializing the backend...[0m
 
---- Encryption Check ---
-[]
 
-=== SUMMARY ===
-Insecure infrastructure: 7 violations BLOCKED
-Secure infrastructure: 0 violations - APPROVED for deployment
+Terraform has created a lock file [1m.terraform.lock.hcl[0m to record the provider
+selections it made above. Include this file in your version control repository
+so that Terraform can guarantee to make the same selections by default when
+you run "terraform init" in the future.[0m
+
+[0m[1m[32mTerraform has been successfully initialized![0m[32m[0m
+[0m[32m
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.[0m
+[32m[1mSuccess![0m The configuration is valid.
+[0m
+[0m[1mInitializing provider plugins found in the configuration...[0m
+- Finding hashicorp/aws versions matching "~> 5.0"...
+- Installing hashicorp/aws v5.100.0...
+- Installed hashicorp/aws v5.100.0 (signed by HashiCorp)
+
+[0m[1mInitializing the backend...[0m
+
+
+Terraform has created a lock file [1m.terraform.lock.hcl[0m to record the provider
+selections it made above. Include this file in your version control repository
+so that Terraform can guarantee to make the same selections by default when
+you run "terraform init" in the future.[0m
+
+[0m[1m[32mTerraform has been successfully initialized![0m[32m[0m
+[0m[32m
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.[0m
+[33m╷[0m[0m
+[33m│[0m [0m[1m[33mWarning: [0m[0m[1mArgument is deprecated[0m
+[33m│[0m [0m
+[33m│[0m [0m[0m  with aws_s3_bucket.insecure_bucket,
+[33m│[0m [0m  on insecure-infra.tf line 24, in resource "aws_s3_bucket" "insecure_bucket":
+[33m│[0m [0m  24:   acl    = [4m"public-read"[0m[0m
+[33m│[0m [0m
+[33m│[0m [0macl is deprecated. Use the aws_s3_bucket_acl resource instead.
+[33m╵[0m[0m
+[32m[1mSuccess![0m The configuration is valid, but there were some
+validation warnings as shown above.
+[0m

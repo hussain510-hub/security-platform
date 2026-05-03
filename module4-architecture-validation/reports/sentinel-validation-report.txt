@@ -1,9 +1,3 @@
-=== Sentinel Policy Validation Report ===
-Date: Wed Apr  8 15:55:34 UTC 2026
-
-=== INSECURE INFRASTRUCTURE RESULTS ===
-
---- S3 Security Check ---
 Execution trace. The information below will show the values of all
 the rules evaluated. Note that some rules may be missing if
 short-circuit logic was taken.
@@ -38,8 +32,6 @@ s3-security.sentinel:18:1 - Rule "no_public_read"
   Value:
     false
 
-
---- Encryption Check ---
 Execution trace. The information below will show the values of all
 the rules evaluated. Note that some rules may be missing if
 short-circuit logic was taken.
@@ -74,8 +66,6 @@ encryption.sentinel:23:1 - Rule "ebs_encrypted"
   Value:
     false
 
-
---- Network Security Check ---
 Execution trace. The information below will show the values of all
 the rules evaluated. Note that some rules may be missing if
 short-circuit logic was taken.
@@ -110,18 +100,6 @@ network-security.sentinel:17:1 - Rule "no_open_ssh"
   Value:
     false
 
-
-=== SECURE INFRASTRUCTURE RESULTS ===
-
---- S3 Security Check ---
 Pass - s3-security.sentinel
-
---- Encryption Check ---
 Pass - encryption.sentinel
-
---- Network Security Check ---
 Pass - network-security.sentinel
-
-=== SUMMARY ===
-Insecure infrastructure: 3 policies FAILED — deployment blocked
-Secure infrastructure: 3 policies PASSED — approved for deployment

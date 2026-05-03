@@ -7,8 +7,9 @@
 # Subscription: 4db9fc14-989b-40b7-be4d-5bde1c4d991a
 # ================================================
 
+set -e
 SUBSCRIPTION_ID="4db9fc14-989b-40b7-be4d-5bde1c4d991a"
-POLICY_DIR="module2-compliance/azure-policy"
+POLICY_DIR="$(pwd)"
 
 echo "=== Verifying Azure Connection ==="
 az account show
@@ -20,7 +21,7 @@ az policy definition create \
   --name "require-environment-tag" \
   --display-name "Require Environment Tag on all resources" \
   --description "Denies creation of resources without Environment tag - ISO27001 compliance" \
-  --rules ${POLICY_DIR}/require-tags-policy.json \
+  --rules @${POLICY_DIR}/require-tags-policy.json \
   --mode All
 
 echo ""
@@ -30,7 +31,7 @@ az policy definition create \
   --name "allowed-eu-locations" \
   --display-name "Allow EU Locations Only" \
   --description "Restricts resource creation to EU regions only - GDPR compliance" \
-  --rules ${POLICY_DIR}/allowed-locations-policy.json \
+  --rules @${POLICY_DIR}/allowed-locations-policy.json \
   --mode All
 
 echo ""
@@ -40,7 +41,7 @@ az policy definition create \
   --name "require-https-storage" \
   --display-name "Require HTTPS for Storage Accounts" \
   --description "Denies storage accounts without HTTPS only traffic - PCI-DSS compliance" \
-  --rules ${POLICY_DIR}/require-https-storage.json \
+  --rules @${POLICY_DIR}/require-https-storage.json \
   --mode All
 
 echo ""
