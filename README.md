@@ -30,7 +30,7 @@ Most organizations use cloud services across AWS and Azure simultaneously. Witho
 
 ```
 PROBLEM:  Multi-cloud = multiple tools, no unified view, manual compliance checks
-SOLUTION: One integrated platform — automated scanning → compliance → risk → validation → IAM → dashboard
+SOLUTION: One integrated platform — automated scanning → compliance → risk → threat model → validation → IAM → dashboard
 ```
 
 ---
@@ -67,9 +67,10 @@ SOLUTION: One integrated platform — automated scanning → compliance → risk
                     │   MODULE 3          │
                     │  Risk Management    │
                     │  FAIR Risk Scoring  │
-                    │  + BIA + Python     │
+                    │  + BIA + STRIDE     │
+                    │  Threat Modelling   │
                     └──────────┬──────────┘
-                               │ risk_report.csv + top_10_risks.csv + bia_report.csv
+                               │ risk_report.csv + top_10_risks.csv + bia_report.csv + threat_model_report.csv
           ┌────────────────────┼────────────────────┐
           │                    │                    │
 ┌─────────▼──────────┐         │         ┌──────────▼─────────┐
@@ -100,7 +101,7 @@ SOLUTION: One integrated platform — automated scanning → compliance → risk
 ┌────────────┐     CSV/JSON      ┌─────────────┐    Risk Scores    ┌────────────────┐
 │  Module 1  │ ───────────────►  │  Module 2   │ ───────────────►  │   Module 3     │
 │  Prowler   │                   │  Compliance │                   │  FAIR Engine   │
-│  Findings  │                   │  Reports    │                   │  BIA Report    │
+│  Findings  │                   │  Reports    │                   │  BIA + STRIDE  │
 └────────────┘                   └─────────────┘                   └───────┬────────┘
                                                                            │
                                                                            ▼
@@ -120,7 +121,7 @@ SOLUTION: One integrated platform — automated scanning → compliance → risk
 |---|--------|--------|-------|------------|
 | 1 | [Cloud Governance](module1-cloud-governance/README.md) | ✅ Complete | Prowler, ScoutSuite, Cloud Custodian | Security findings across AWS + Azure |
 | 2 | [Automated Compliance](module2-automated-compliance/README.md) | ✅ Complete | AWS Config, Azure Policy, Cloud Custodian | GDPR / ISO27001 / PCI-DSS reports |
-| 3 | [Risk Management](module3-risk-management/README.md) | ✅ Complete | Python, FAIR Model, pandas | FAIR risk scores + BIA financials |
+| 3 | [Risk Management](module3-risk-management/README.md) | ✅ Complete | Python, FAIR Model, pandas, STRIDE | FAIR risk scores + BIA financials + threat model |
 | 4 | [Architecture Validation](module4-architecture-validation/README.md) | ✅ Complete | OPA, Terraform Sentinel, Terraform, Ansible | Policy enforcement + hardened EC2 |
 | 5 | [IAM Governance](module5-iam-governance/README.md) | ✅ Complete | AWS CLI, Azure CLI, Python scripts | Privilege escalation detection + IAM report |
 | 6 | [Executive Dashboard](module6-executive-dashboard/README.md) | ✅ Complete | HTML/CSS/JS | Unified security dashboard |
@@ -148,6 +149,7 @@ SOLUTION: One integrated platform — automated scanning → compliance → risk
 | IaC | Terraform | v1.14.8 | Infrastructure as code |
 | Hardening | Ansible | core 2.20.4 | Server configuration hardening |
 | Risk Engine | Custom Python | 3.12 | FAIR risk scoring + BIA |
+| Threat Modelling | Custom Python | 3.12 | STRIDE classification + control mapping |
 | IAM Analysis | Custom Python | 3.12 | Privilege escalation detection |
 | Dashboard | HTML/CSS/JS | — | Executive reporting |
 
@@ -166,6 +168,7 @@ SOLUTION: One integrated platform — automated scanning → compliance → risk
 | **NIST CSF** | Cybersecurity framework | M1, M6 |
 | **ISO 27017** | Cloud security controls | M6 |
 | **FAIR** | Financial risk quantification | M3 |
+| **STRIDE** | Threat modelling framework | M3 |
 
 ---
 
@@ -216,11 +219,12 @@ custodian run --output-dir module1-cloud-governance/cloud-custodian/output \
 bash module2-automated-compliance/aws-config/enable-config-rules.sh
 bash module2-automated-compliance/azure-policy/deploy-azure-policies.sh
 
-# 5. Module 3 — Score risks
+# 5. Module 3 — Score risks + threat model
 cd module3-risk-management/scripts
 python combine_prowler.py
 python risk_engine.py
 python bia_report.py
+python threat_model.py
 
 # 6. Module 4 — Validate architecture
 opa eval --data module4-architecture-validation/opa/policies/ \
@@ -301,14 +305,16 @@ security-platform/
 │   ├── README.md
 │   ├── input/
 │   │   └── prowler_combined.csv
-│   ├── output/                            ← risk_report.csv, top_10_risks.csv, bia_report.csv
+│   ├── output/                            ← risk_report.csv, top_10_risks.csv, bia_report.csv, threat_model_report.csv
 │   │   ├── bia_report.csv
 │   │   ├── risk_report.csv
-│   │   └── top_10_risks.csv
+│   │   ├── top_10_risks.csv
+│   │   └── threat_model_report.csv        ← STRIDE categories + linked controls per finding
 │   └── scripts/
 │       ├── bia_report.py
 │       ├── combine_prowler.py
-│       └── risk_engine.py
+│       ├── risk_engine.py
+│       └── threat_model.py                ← Step 4: STRIDE threat model + control mapping
 │
 ├── module4-architecture-validation/
 │   ├── README.md
@@ -368,4 +374,4 @@ security-platform/
 **Muhammad Hussain Zahid**
 Diploma in Artificial Intelligence Operations — EduQual Level 6
 Al-Nafi International College
-📧 muhammadhussainzahid5@gmail.com
+

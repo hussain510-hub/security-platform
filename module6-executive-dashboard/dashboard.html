@@ -226,7 +226,7 @@ canvas{display:block;}
   <div class="sf">
     <p>
       Account: <span>334960985321</span><br>
-      Date: <span>09 Apr 2026</span><br>
+      Date: <span>10 May 2026</span><br>
       Checks: <span>12,608 total</span>
     </p>
   </div>
@@ -239,7 +239,7 @@ canvas{display:block;}
   <div class="ph">
     <div>
       <div class="pt">Enterprise Cloud Security — Executive Dashboard</div>
-      <div class="ps">Prowler · ScoutSuite · AWS Config · Azure Policy · OPA · Sentinel · Cloud Custodian · Custom IAM · 09 Apr 2026</div>
+      <div class="ps">Prowler · ScoutSuite · AWS Config · Azure Policy · OPA · Sentinel · Cloud Custodian · Custom IAM · 10 May 2026</div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;">
       <span class="bdg b-red">&#9679; Critical Risk</span>
@@ -373,13 +373,11 @@ canvas{display:block;}
   <!-- RISK + IAM -->
   <div class="g2">
     <div class="card">
-      <div class="ct">Module 3 — FAIR risk register · top 10 EC2 findings (eu-north-1)</div>
+      <div class="ct">Module 3 — FAIR risk register · top EC2 findings (eu-north-1)</div>
       <table class="rt">
         <thead><tr><th style="width:60%">EC2 Finding</th><th>Severity</th><th>ALE</th></tr></thead>
         <tbody>
-          <tr><td>EBS encryption disabled at account level</td><td><span class="sv sc">CRIT</span></td><td style="font-family:var(--mono);color:var(--red);font-size:11px;">$2.55M</td></tr>
-          <tr><td>EBS volumes in use — not encrypted</td><td><span class="sv sc">CRIT</span></td><td style="font-family:var(--mono);color:var(--red);font-size:11px;">$2.55M</td></tr>
-          <tr><td>EBS volumes not covered by backup plan</td><td><span class="sv sc">CRIT</span></td><td style="font-family:var(--mono);color:var(--red);font-size:11px;">$2.55M</td></tr>
+          <tr><td>EBS encryption disabled / volumes unencrypted</td><td><span class="sv sc">CRIT</span></td><td style="font-family:var(--mono);color:var(--red);font-size:11px;">$2.55M</td></tr>
           <tr><td>NACL allows SSH/RDP from 0.0.0.0/0 (×4)</td><td><span class="sv sc">CRIT</span></td><td style="font-family:var(--mono);color:var(--red);font-size:11px;">$2.55M ×4</td></tr>
           <tr><td>Security group: port 22 open to world</td><td><span class="sv sc">CRIT</span></td><td style="font-family:var(--mono);color:var(--red);font-size:11px;">$2.55M</td></tr>
           <tr><td>AWS Inspector not enabled</td><td><span class="sv sc">CRIT</span></td><td style="font-family:var(--mono);color:var(--red);font-size:11px;">$2.55M</td></tr>
@@ -392,9 +390,20 @@ canvas{display:block;}
         <div class="ct" style="margin-bottom:8px;">BIA — critical business assets</div>
         <div class="bia-head bia-row"><span>Asset</span><span>Criticality</span><span>Max Exposure</span><span>Regulation</span></div>
         <div class="bia-row"><span>Customer Data Storage (S3)</span><span><span class="sv sc">CRIT</span></span><span style="font-family:var(--mono);color:var(--red);">$1.2M</span><span style="font-size:11px;color:var(--sub)">GDPR, PCI</span></div>
-        <div class="bia-row"><span>Azure Virtual Machines</span><span><span class="sv sh">HIGH</span></span><span style="font-family:var(--mono);color:var(--warn);">$1.08M</span><span style="font-size:11px;color:var(--sub)">ISO27001</span></div>
         <div class="bia-row"><span>AWS Production (eu-north-1)</span><span><span class="sv sc">CRIT</span></span><span style="font-family:var(--mono);color:var(--red);">$720K</span><span style="font-size:11px;color:var(--sub)">SOC2, ISO</span></div>
-        <div class="bia-row"><span>Azure Storage (EU)</span><span><span class="sv sh">HIGH</span></span><span style="font-family:var(--mono);color:var(--warn);">$720K</span><span style="font-size:11px;color:var(--sub)">GDPR</span></div>
+        <div class="bia-row"><span>Azure Virtual Machines</span><span><span class="sv sh">HIGH</span></span><span style="font-family:var(--mono);color:var(--warn);">$1.08M</span><span style="font-size:11px;color:var(--sub)">ISO27001</span></div>
+      </div>
+
+      <!-- STRIDE THREAT MODEL -->
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
+        <div class="ct" style="margin-bottom:8px;">STRIDE threat model — threat_model_report.csv</div>
+        <div class="or"><span>EC2 / IAM — Spoofing, Elevation of Privilege</span><span class="sv sc" style="font-size:9px;padding:2px 8px;">Very High</span></div>
+        <div class="or"><span>S3 / EBS — Information Disclosure, Tampering</span><span class="sv sc" style="font-size:9px;padding:2px 8px;">Very High</span></div>
+        <div class="or"><span>CloudTrail / VPC — Repudiation, Denial of Service</span><span class="sv sc" style="font-size:9px;padding:2px 8px;">Very High</span></div>
+        <div class="or"><span>Azure VMs / Entra ID — Spoofing, Elevation of Privilege</span><span class="sv sh" style="font-size:9px;padding:2px 8px;">High</span></div>
+        <div style="margin-top:8px;padding:7px 10px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:10px;color:var(--sub);font-family:var(--mono);">
+          847 findings mapped · STRIDE_Threats · Linked_Control · Threat_Likelihood
+        </div>
       </div>
     </div>
 
