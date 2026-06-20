@@ -1,0 +1,266 @@
+{
+  "generated_at": "2026-06-20T03:37:32.948628+00:00",
+  "generator": "generate_metrics.py",
+  "sources_used": [
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_aws_account_security_onboarding_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_aws_audit_manager_control_tower_guardrails_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_aws_foundational_security_best_practices_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_aws_foundational_technical_review_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_aws_well_architected_framework_security_pillar_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_c5_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_ccc_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_cis_1.4_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_cis_1.5_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_cis_2.0_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_cis_3.0_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_cis_4.0_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_cis_5.0_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_cis_6.0_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_cisa_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_csa_ccm_4.0_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_ens_rd2022_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_fedramp_20x_ksi_low_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_fedramp_low_revision_4_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_fedramp_moderate_revision_4_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_ffiec_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_gdpr_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_gxp_21_cfr_part_11_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_gxp_eu_annex_11_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_hipaa_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_iso27001_2013_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_iso27001_2022_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_kisa_isms_p_2023_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_kisa_isms_p_2023_korean_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_mitre_attack_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_nis2_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_nist_800_171_revision_2_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_nist_800_53_revision_4_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_nist_800_53_revision_5_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_nist_csf_1.1_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_nist_csf_2.0_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_pci_3.2.1_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_pci_4.0_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_prowler_threatscore_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_rbi_cyber_security_framework_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_secnumcloud_3.2_aws.csv",
+    "module1-cloud-governance/aws/prowler/compliance/prowler-output-334960985321-20260406192144_soc2_aws.csv",
+    "module1-cloud-governance/azure/prowler/compliance/prowler-output-muhammadhussainzahid5gmail.onmicrosoft.com-20260407152107_c5_azure.csv",
+    "module1-cloud-governance/azure/prowler/compliance/prowler-output-muhammadhussainzahid5gmail.onmicrosoft.com-20260407152107_ccc_azure.csv",
+    "module1-cloud-governance/azure/prowler/compliance/prowler-output-muhammadhussainzahid5gmail.onmicrosoft.com-20260407152107_cis_2.0_azure.csv",
+    "module1-cloud-governance/azure/prowler/compliance/prowler-output-muhammadhussainzahid5gmail.onmicrosoft.com-20260407152107_cis_2.1_azure.csv",
+    "module1-cloud-governance/azure/prowler/compliance/prowler-output-muhammadhussainzahid5gmail.onmicrosoft.com-20260407152107_cis_3.0_azure.csv",
+    "module1-cloud-governance/azure/prowler/compliance/prowler-output-muhammadhussainzahid5gmail.onmicrosoft.com-20260407152107_cis_4.0_azure.csv",
+    "module1-cloud-governance/azure/prowler/compliance/prowler-output-muhammadhussainzahid5gmail.onmicrosoft.com-20260407152107_cis_5.0_azure.csv",
+    "module1-cloud-governance/azure/prowler/compliance/prowler-output-muhammadhussainzahid5gmail.onmicrosoft.com-20260407152107_csa_ccm_4.0_azure.csv",
+    "module1-cloud-governance/azure/prowler/compliance/prowler-output-muhammadhussainzahid5gmail.onmicrosoft.com-20260407152107_ens_rd2022_azure.csv",
+    "module1-cloud-governance/azure/prowler/compliance/prowler-output-muhammadhussainzahid5gmail.onmicrosoft.com-20260407152107_fedramp_20x_ksi_low_azure.csv",
+    "module1-cloud-governance/azure/prowler/compliance/prowler-output-muhammadhussainzahid5gmail.onmicrosoft.com-20260407152107_hipaa_azure.csv",
+    "module1-cloud-governance/azure/prowler/compliance/prowler-output-muhammadhussainzahid5gmail.onmicrosoft.com-20260407152107_iso27001_2022_azure.csv",
+    "module1-cloud-governance/azure/prowler/compliance/prowler-output-muhammadhussainzahid5gmail.onmicrosoft.com-20260407152107_mitre_attack_azure.csv",
+    "module1-cloud-governance/azure/prowler/compliance/prowler-output-muhammadhussainzahid5gmail.onmicrosoft.com-20260407152107_nis2_azure.csv",
+    "module1-cloud-governance/azure/prowler/compliance/prowler-output-muhammadhussainzahid5gmail.onmicrosoft.com-20260407152107_pci_4.0_azure.csv",
+    "module1-cloud-governance/azure/prowler/compliance/prowler-output-muhammadhussainzahid5gmail.onmicrosoft.com-20260407152107_prowler_threatscore_azure.csv",
+    "module1-cloud-governance/azure/prowler/compliance/prowler-output-muhammadhussainzahid5gmail.onmicrosoft.com-20260407152107_rbi_cyber_security_framework_azure.csv",
+    "module1-cloud-governance/azure/prowler/compliance/prowler-output-muhammadhussainzahid5gmail.onmicrosoft.com-20260407152107_secnumcloud_3.2_azure.csv",
+    "module1-cloud-governance/azure/prowler/compliance/prowler-output-muhammadhussainzahid5gmail.onmicrosoft.com-20260407152107_soc2_azure.csv",
+    "module2-automated-compliance/reports/aws-config-compliance.json",
+    "module2-automated-compliance/reports/gdpr-compliance-report.md",
+    "module2-automated-compliance/reports/iso27001-compliance-report.md",
+    "module2-automated-compliance/reports/pci-dss-compliance-report.md",
+    "module3-risk-management/output/bia_report.csv",
+    "module3-risk-management/output/threat_model_report.csv",
+    "module3-risk-management/output/top_10_risks.csv",
+    "module4-architecture-validation/reports/ansible-hardening-report-ec2.txt",
+    "module4-architecture-validation/reports/opa-validation-report.txt",
+    "module4-architecture-validation/reports/sentinel-validation-report.txt",
+    "module5-iam-governance/azure_iam_findings.txt",
+    "module5-iam-governance/credential_report.csv",
+    "module5-iam-governance/remediation_report.txt"
+  ],
+  "module1_module3_prowler": {
+    "summary": {
+      "total": 12608,
+      "fail": 5774,
+      "pass": 3754,
+      "manual": 3080,
+      "fail_pct": 45.8,
+      "pass_pct": 29.8,
+      "manual_pct": 24.4
+    },
+    "framework_coverage": [
+      {
+        "framework": "C5",
+        "count": 1859
+      },
+      {
+        "framework": "PCI",
+        "count": 1677
+      },
+      {
+        "framework": "NIST-800-53-Revision-5",
+        "count": 1201
+      },
+      {
+        "framework": "KISA-ISMS-P",
+        "count": 1047
+      },
+      {
+        "framework": "CIS",
+        "count": 858
+      },
+      {
+        "framework": "ISO27001",
+        "count": 645
+      },
+      {
+        "framework": "MITRE-ATTACK",
+        "count": 562
+      },
+      {
+        "framework": "NIST-CSF",
+        "count": 535
+      },
+      {
+        "framework": "NIS2",
+        "count": 500
+      }
+    ]
+  },
+  "module2_compliance": {
+    "gdpr_pct": 40,
+    "iso27001_pct": 43,
+    "pci_dss_pct": 50,
+    "soc2_pct": 27.1,
+    "soc2_detail": {
+      "total": 210,
+      "pass": 57,
+      "fail": 153,
+      "score_pct": 27.1,
+      "formula": "PASS / (PASS + FAIL) = 57 / 210 computed from FRAMEWORK=='SOC2' rows in prowler_combined.csv"
+    },
+    "avg_compliance_pct": 40.0,
+    "aws_config_rules": [
+      {
+        "rule": "cloudtrail-enabled",
+        "status": "NON_COMPLIANT"
+      },
+      {
+        "rule": "encrypted-volumes",
+        "status": "INSUFFICIENT_DATA"
+      },
+      {
+        "rule": "iam-password-policy",
+        "status": "NON_COMPLIANT"
+      }
+    ]
+  },
+  "module3_risk": {
+    "top_risks": [
+      {
+        "finding": "This control checks whether account-level encryption is enabled by default for Amazon Elastic Block Store(Amazon EBS). The control fails if the account level en",
+        "severity": "Critical",
+        "ale_usd": 2550000.0
+      },
+      {
+        "finding": "This control checks whether the EBS volumes that are in an attached state are encrypted. To pass this check, EBS volumes must be in use and encrypted. If the EB",
+        "severity": "Critical",
+        "ale_usd": 2550000.0
+      },
+      {
+        "finding": "This control evaluates if an Amazon EBS volume in in-use state is covered by a backup plan. The control fails if an EBS volume isn't covered by a backup plan. I",
+        "severity": "Critical",
+        "ale_usd": 2550000.0
+      },
+      {
+        "finding": "This control checks if default ports for SSH/RDP ingress traffic for network access control lists (NACLs) is unrestricted. The rule fails if a NACL inbound entr",
+        "severity": "Critical",
+        "ale_usd": 2550000.0
+      }
+    ],
+    "total_ale_usd": 25500000.0,
+    "bia_top_assets": [
+      {
+        "asset": "Customer Data Storage (S3)",
+        "criticality": "CRITICAL",
+        "exposure_usd": 1200000.0,
+        "regulations": "GDPR, PCI-DSS"
+      },
+      {
+        "asset": "Azure Virtual Machines",
+        "criticality": "HIGH",
+        "exposure_usd": 1080000.0,
+        "regulations": "ISO27001"
+      },
+      {
+        "asset": "Security Monitoring Platform",
+        "criticality": "MEDIUM",
+        "exposure_usd": 840000.0,
+        "regulations": "SOC2"
+      }
+    ],
+    "stride_summary": [
+      {
+        "service": "Azure AD",
+        "stride": "Spoofing, Elevation of Privilege"
+      },
+      {
+        "service": "Azure API Management",
+        "stride": "Spoofing, Denial of Service"
+      },
+      {
+        "service": "Azure Monitor",
+        "stride": "Repudiation"
+      },
+      {
+        "service": "Azure Virtual Machines",
+        "stride": "Spoofing, Elevation of Privilege"
+      }
+    ],
+    "threat_model_total_findings": 5774
+  },
+  "module4_architecture": {
+    "opa_blocked": 7,
+    "sentinel": {
+      "fail": 3,
+      "pass": 3
+    },
+    "ansible_recap": {
+      "ok": 19,
+      "changed": 11,
+      "unreachable": 0,
+      "failed": 0,
+      "skipped": 0,
+      "rescued": 0,
+      "ignored": 0
+    }
+  },
+  "module5_iam": {
+    "credential_report": {
+      "total_users": 9,
+      "no_mfa": 9,
+      "ghost_accounts": 7
+    },
+    "azure_iam": {
+      "critical": 3,
+      "high": 4,
+      "owner_at_subscription": 3,
+      "contributor_at_subscription": 2
+    },
+    "privilege_escalation_findings": 2,
+    "scores": {
+      "aws_score": 16,
+      "azure_score": 24,
+      "combined_score": 20,
+      "formula": "AWS = 100 - 6*9(no MFA, capped 54) - 15*2(privesc, capped 30) = 16; Azure = 100 - 20*3(Owner@sub, capped 60) - 8*2(Contributor@sub, capped 32) = 24; Combined = avg = 20"
+    }
+  },
+  "overall_security_score": 37,
+  "overall_score_formula": "0.35*IAM_combined(20) + 0.35*avg_compliance(40.0) + 0.30*(100-prowler_fail_pct)(54.2) = 37",
+  "trend_history": [
+    {
+      "date": "2026-06-20",
+      "security_score": 37,
+      "avg_compliance": 40.0
+    }
+  ]
+}
