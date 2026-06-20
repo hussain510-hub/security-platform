@@ -88,7 +88,8 @@ SOLUTION: One integrated platform — automated scanning → compliance → risk
                     │   MODULE 6          │
                     │  Executive          │
                     │  Dashboard          │
-                    │  HTML Report        │
+                    │  Automated Python   │
+                    │  Pipeline → HTML    │
                     │  CIS+NIST+ISO 27017 │
                     └─────────────────────┘
 ```
@@ -109,7 +110,8 @@ SOLUTION: One integrated platform — automated scanning → compliance → risk
 │  Module 4  │                   │  Module 6   │◄──────────────────│   Module 5     │
 │  OPA/Senti │ ───────────────►  │  Executive  │                   │  IAM Report    │
 │  nel/Ansible│                  │  Dashboard  │                   │                │
-│  Reports   │                   │  (HTML)     │                   └────────────────┘
+│  Reports   │                   │  (Automated │                   └────────────────┘
+│            │                   │   Pipeline) │
 └────────────┘                   └─────────────┘
 ```
 
@@ -124,7 +126,7 @@ SOLUTION: One integrated platform — automated scanning → compliance → risk
 | 3 | [Risk Management](module3-risk-management/README.md) | ✅ Complete | Python, FAIR Model, pandas, STRIDE | FAIR risk scores + BIA financials + threat model |
 | 4 | [Architecture Validation](module4-architecture-validation/README.md) | ✅ Complete | OPA, Terraform Sentinel, Terraform, Ansible | Policy enforcement + hardened EC2 |
 | 5 | [IAM Governance](module5-iam-governance/README.md) | ✅ Complete | AWS CLI, Azure CLI, Python scripts | Privilege escalation detection + IAM report |
-| 6 | [Executive Dashboard](module6-executive-dashboard/README.md) | ✅ Complete | HTML/CSS/JS | Unified security dashboard |
+| 6 | [Executive Dashboard](module6-executive-dashboard/README.md) | ✅ Complete | Python (pandas), HTML/CSS/JS, Chart.js | Automated metrics pipeline → live executive dashboard |
 
 ---
 
@@ -151,7 +153,7 @@ SOLUTION: One integrated platform — automated scanning → compliance → risk
 | Risk Engine | Custom Python | 3.12 | FAIR risk scoring + BIA |
 | Threat Modelling | Custom Python | 3.12 | STRIDE classification + control mapping |
 | IAM Analysis | Custom Python | 3.12 | Privilege escalation detection |
-| Dashboard | HTML/CSS/JS | — | Executive reporting |
+| Dashboard | Python + HTML/CSS/JS (Chart.js) | 3.12 | Automated metrics pipeline + executive reporting |
 
 
 ---
@@ -240,8 +242,11 @@ python3 access_optimization.py
 python3 azure_iam_analysis.py
 python3 iam_governance_report.py
 
-# 8. Module 6 — View executive dashboard
-open module6-executive-dashboard/dashboard_clean.html
+# 8. Module 6 — Generate + view executive dashboard
+cd module6-executive-dashboard
+python3 generate_metrics.py --root .. --out metrics.json --history trend_history.json
+python3 render_dashboard.py --metrics metrics.json --out dashboard.html
+open dashboard.html
 ```
 
 ---
@@ -327,7 +332,7 @@ security-platform/
 │   │   ├── policies/                      ← Sentinel policies (encryption, network, S3)
 │   │   ├── sentinel.hcl
 │   │   └── test/                          ← Secure + insecure Terraform plans
-│   ├── terraform/
+[O│   ├── terraform/
 │   │   ├── insecure-infra.tf
 │   │   └── secure-infra.tf
 │   └── reports/                           ← Validation reports (OPA, Sentinel, Ansible)
@@ -351,7 +356,11 @@ security-platform/
 │
 └── module6-executive-dashboard/
     ├── README.md
-    └── dashboard.html                     ← Executive HTML dashboard
+    ├── generate_metrics.py                ← Parses Modules 1-5 raw reports → metrics.json
+    ├── render_dashboard.py                ← Renders metrics.json → dashboard.html
+    ├── metrics.json                       ← Auditable, machine-generated metrics
+    ├── trend_history.json                 ← Appends one data point per pipeline run
+    └── dashboard.html                     ← Executive HTML dashboard (generated, not hand-edited)
 ```
 
 ---
@@ -374,4 +383,3 @@ security-platform/
 **Muhammad Hussain Zahid**
 Diploma in Artificial Intelligence Operations — EduQual Level 6
 Al-Nafi International College
-
