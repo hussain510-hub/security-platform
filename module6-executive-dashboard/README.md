@@ -1,204 +1,126 @@
-# Module 6 — Executive Dashboard
+# Cloud Security Executive Dashboard — Automated Metrics Pipeline
 
-> **Unified Security Reporting · HTML Dashboard · CIS + NIST + ISO 27017 Mapping**
-> **Status:** ✅ Complete | **Output:** Single HTML file — no server required
+An automated pipeline that parses raw multi-cloud security scan output (AWS + Azure) across five governance modules and generates a live executive dashboard — with every number traced back to a real source file.
 
----
+This was built to satisfy three requirements:
 
-## Table of Contents
-- [What This Module Does](#what-this-module-does)
-- [Dashboard Architecture](#dashboard-architecture)
-- [Data Sources Diagram](#data-sources-diagram)
-- [Dashboard Sections](#dashboard-sections)
-- [How to View the Dashboard](#how-to-view-the-dashboard)
-- [Compliance Framework Mapping](#compliance-framework-mapping)
-- [Design Decisions](#design-decisions)
+1. **Comprehensive cloud security metrics collection and analysis**
+2. **Executive dashboard automation with risk and compliance summaries**
+3. **Trend analysis and security posture improvement tracking**
 
----
-
-## What This Module Does
-
-Module 6 is the **aggregation layer** of the entire platform. It takes the outputs of all five preceding modules and presents them in a single, unified executive dashboard that answers the question every CISO and board member asks:
+## Architecture
 
 ```
-"What is our overall security posture right now?"
+Module 1-5 raw reports (CSV / JSON / Markdown / TXT)
+                │
+                ▼
+      generate_metrics.py   ──►  metrics.json        (auditable, machine-generated)
+                                  trend_history.json  (appends one point per run)
+                │
+                ▼
+      render_dashboard.py   ──►  dashboard.html       (what gets presented)
 ```
 
-> **Note:** This module does not run any scans, scripts, or cloud commands. All data was gathered from the outputs of Modules 1–5 and assembled into a standalone HTML file. This is intentional — the dashboard is a reporting layer, not a scanning layer.
+Two independent stages:
 
----
+- **`generate_metrics.py`** is the automation layer. It never hardcodes a value — every number is parsed, computed, or aggregated directly from a source file. This is what makes the dashboard re-runnable rather than hand-edited.
+- **`render_dashboard.py`** is purely presentational. It reads `metrics.json` and writes the HTML. Change the visuals here without touching how any number is calculated.
 
-## Dashboard Architecture
-
-```
-┌──────────────────────────────────────────────────────────────────────┐
-│                   MODULE 6 — EXECUTIVE DASHBOARD                     │
-│                         dashboard.html                               │
-│                                                                      │
-│  ┌────────────────────────────────────────────────────────────────┐  │
-│  │                    TOP METRICS BAR                             │  │
-│  │  Overall Security Score  │  Compliance %  │  Total Risks  │   │  │
-│  │        [72/100]          │    [68%]       │    [847]      │   │  │
-│  └────────────────────────────────────────────────────────────────┘  │
-│                                                                      │
-│  ┌──────────────────────┐  ┌──────────────────────────────────────┐  │
-│  │  MODULE STATUS       │  │  COMPLIANCE FRAMEWORK STATUS         │  │
-│  │                      │  │                                      │  │
-│  │  M1 Cloud Gov  ✅    │  │  CIS Benchmark     [██████░░] 72%   │  │
-│  │  M2 Compliance ✅    │  │  GDPR              [████░░░░] 61%   │  │
-│  │  M3 Risk Mgmt  ✅    │  │  ISO 27001         [█████░░░] 68%   │  │
-│  │  M4 Arch Valid ✅    │  │  PCI-DSS           [████░░░░] 58%   │  │
-│  │  M5 IAM Gov    ✅    │  │  NIST CSF          [██████░░] 74%   │  │
-│  └──────────────────────┘  │  ISO 27017         [█████░░░] 65%   │  │
-│                             └──────────────────────────────────────┘  │
-│                                                                      │
-│  ┌──────────────────────────────────────────────────────────────────┐ │
-│  │                   TOP 10 RISKS (from Module 3)                  │ │
-│  │  #1  MFA disabled on root account     — CRITICAL  $510K/yr ALE │ │
-│  │  #2  Public S3 bucket — data-lake     — CRITICAL  $420K/yr ALE │ │
-│  │  #3  Privilege escalation — svc-backup— CRITICAL  $380K/yr ALE │ │
-│  │  ...                                                            │ │
-│  └──────────────────────────────────────────────────────────────────┘ │
-│                                                                      │
-│  ┌───────────────────────┐  ┌───────────────────────────────────────┐ │
-│  │  IAM FINDINGS         │  │  TREND ANALYSIS                       │ │
-│  │  (from Module 5)      │  │  Security Score over time             │ │
-│  │                       │  │                                       │ │
-│  │  Critical:   2        │  │  ▲                                    │ │
-│  │  High:       7        │  │  │         ╱─────                    │ │
-│  │  Medium:     5        │  │  │    ╱───╱                           │ │
-│  │  Low:        7        │  │  │───╱                                │ │
-│  │                       │  │  └────────────────────►               │ │
-│  │  Total: 21 issues     │  │   Week 1   Week 2   Week 3            │ │
-│  └───────────────────────┘  └───────────────────────────────────────┘ │
-│                                                                      │
-│  ┌──────────────────────────────────────────────────────────────────┐ │
-│  │         CIS + NIST CSF + ISO 27017 CONTROL MAPPING              │ │
-│  │  Finding → Framework → Control ID → Status → Recommendation     │ │
-│  └──────────────────────────────────────────────────────────────────┘ │
-└──────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## Data Sources Diagram
-
-```
- Module 1              Module 2              Module 3
- ─────────             ─────────             ─────────
- ScoutSuite    ──►     Compliance   ──►      Top 10
- HTML report           % scores              Risks CSV
- Findings count        (GDPR, ISO,           FAIR ALE $
-                        PCI-DSS)             BIA data
-      │                    │                    │
-      └────────────────────┼────────────────────┘
-                           │
-                           ▼
-                  ┌─────────────────┐
-                  │  dashboard.html  │
-                  │  (Module 6)      │
-                  └─────────────────┘
-                           ▲
-                           │
-      ┌────────────────────┼────────────────────┐
-      │                    │                    │
- Module 4              Module 5             Standards
- ─────────             ─────────            ─────────
- OPA/Sentinel         IAM report           CIS, NIST,
- PASS/FAIL            21 findings          ISO 27017
- Ansible              Privilege esc.       control IDs
- hardening            Azure IAM            mapped to
- report               findings             each finding
-```
-
----
-
-## Dashboard Sections
-
-### Section 1 — Executive Summary Metrics
-
-Top-level KPIs visible at a glance:
-
-| Metric | Value | Source |
-|--------|-------|--------|
-| Overall Security Score | 72 / 100 | Weighted average across all modules |
-| Compliance Score | 68% | Average across GDPR, ISO27001, PCI-DSS, CIS |
-| Total Findings | 847 | Module 1 → Module 3 (FAIL count) |
-| Critical Risks | 3 | Module 3 top_10_risks.csv |
-| Financial Exposure | ~$2.1M ALE | Module 3 FAIR calculation |
-| IAM Issues | 21 | Module 5 governance report |
-
-### Section 2 — Module Status Panel
-
-Visual indicator showing all 5 modules are complete with a summary of what each produced.
-
-### Section 3 — Compliance Framework Scores
-
-Progress bars for each framework showing percentage compliance:
-- CIS Benchmark (AWS + Azure)
-- GDPR
-- ISO 27001
-- PCI-DSS
-- NIST CSF
-- ISO 27017 (cloud-specific)
-
-### Section 4 — Top 10 Risks
-
-Table sourced from `module3-risk/output/top_10_risks.csv` showing:
-- Finding description
-- Affected service and cloud
-- Severity level
-- FAIR ALE (Annual Loss Expectancy in USD)
-- Recommended treatment
-
-### Section 5 — IAM Findings Panel
-
-Summary of Module 5 findings:
-- Privilege escalation paths found
-- Missing MFA count
-- Ghost accounts
-- Azure overprivileged roles
-
-### Section 6 — Trend Analysis
-
-A simulated trend chart showing how the security score improves as modules are implemented week by week — demonstrating the platform's value over time.
-
-### Section 7 — Framework Control Mapping
-
-Detailed table mapping each finding to its specific control IDs across CIS, NIST CSF, and ISO 27017 — the format examiners and auditors expect.
-
----
-
-## How to View the Dashboard
+Re-run both whenever the underlying scan reports change — manually, via cron, or in CI:
 
 ```bash
-# Option 1 — Open directly in browser (no server needed)
-open module6-dashboard/dashboard.html
+pip install pandas --break-system-packages   # one-time
 
-# Option 2 — Serve locally
-cd module6-dashboard
-python -m http.server 8080
-# Then visit: http://localhost:8080/dashboard.html
+python3 generate_metrics.py \
+    --root /path/to/security-platform \
+    --out metrics.json \
+    --history trend_history.json
 
+python3 render_dashboard.py \
+    --metrics metrics.json \
+    --out dashboard.html
 ```
 
----
+Example daily cron entry:
 
-## Compliance Framework Mapping
+```cron
+0 6 * * * cd /path/to/repo && python3 generate_metrics.py --root /path/to/security-platform --out metrics.json --history trend_history.json && python3 render_dashboard.py --metrics metrics.json --out dashboard.html
+```
 
-The dashboard includes an appendix mapping each finding to its specific control IDs:
+## What the dashboard shows
 
-| Framework | Control ID | Control Name | Finding |
-|-----------|-----------|--------------|---------|
-| CIS AWS v1.5 | 1.5 | Ensure MFA enabled on root | Root MFA not enabled |
-| CIS AWS v1.5 | 2.1.1 | Ensure S3 Block Public Access | Public S3 bucket found |
-| NIST CSF | PR.AC-1 | Identities managed | IAM users without MFA |
-| NIST CSF | PR.DS-1 | Data-at-rest protected | Unencrypted EBS volumes |
-| ISO 27017 | CLD.9.5.1 | Segregation in virtual environments | Overprivileged cloud roles |
-| ISO 27017 | CLD.12.1.3 | Capacity management | No auto-scaling policies |
+| Section | Computed from |
+|---|---|
+| Executive summary | Aggregated across all modules, generated fresh each run |
+| Prowler results (12,608 checks: FAIL / PASS / MANUAL) | All AWS + Azure Prowler compliance CSVs (Module 1), concatenated |
+| Framework compliance (GDPR, ISO 27001, PCI-DSS) | Module 2 markdown compliance reports |
+| SOC2 compliance | Computed live from Prowler rows tagged `FRAMEWORK == 'SOC2'` — **not** a hardcoded estimate |
+| AWS Config rule status | `aws-config-compliance.json` |
+| FAIR risk register + ALE | Module 3 `top_10_risks.csv` |
+| Business Impact Analysis (BIA) | Module 3 `bia_report.csv` |
+| STRIDE threat model summary | Module 3 `threat_model_report.csv` |
+| OPA policy gate results | Module 4 `opa-validation-report.txt` |
+| Terraform Sentinel results | Module 4 `sentinel-validation-report.txt` |
+| Ansible hardening recap | Module 4 `ansible-hardening-report-ec2.txt` (PLAY RECAP line) |
+| AWS IAM findings (MFA, ghost accounts) | Module 5 `credential_report.csv` |
+| Azure IAM findings (Owner/Contributor at subscription scope) | Module 5 `azure_iam_findings.txt` |
+| IAM risk scores (AWS / Azure / combined) | Computed live with a documented formula — shown on the dashboard itself, not a black box |
+| Overall security score | Weighted blend of IAM score, average compliance, and Prowler pass rate — formula shown on the dashboard |
+| Trend chart | `trend_history.json` — one point appended automatically per pipeline run |
+| Pipeline provenance | Full list of every source file read during that run, printed at the bottom of the dashboard |
 
----
+## Scoring formulas (transparent, not hardcoded)
 
----
+**SOC2 compliance:**
+```
+PASS / (PASS + FAIL), computed over Prowler rows where FRAMEWORK == 'SOC2'
+```
 
-> **Key insight for the interview:** The executive dashboard is the product. Everything else in the platform — the scans, the risk scores, the policy validations, the IAM analysis — exists to produce the data that goes into this dashboard. A security programme without executive reporting is invisible to the business. Module 6 makes the entire platform visible, measurable, and defensible to leadership.
+**IAM scores (out of 100):**
+```
+AWS score   = 100 − 6×(users without MFA, capped at 54) − 15×(privilege-escalation findings, capped at 30)
+Azure score = 100 − 20×(Owner-at-subscription assignments, capped at 60) − 8×(Contributor-at-subscription assignments, capped at 32)
+Combined    = average(AWS score, Azure score)
+```
+
+**Overall security score:**
+```
+0.35 × IAM combined score + 0.35 × average compliance % + 0.30 × (100 − Prowler fail %)
+```
+
+All inputs to these formulas are counts pulled directly from the source files, not constants — every figure on the dashboard can be traced back through the formula to a file in this repo.
+
+## Trend tracking
+
+`trend_history.json` is append-only: each pipeline run adds one `{date, security_score, avg_compliance}` entry (re-running on the same day updates rather than duplicates that day's entry). On a single assessment this will show one data point, clearly labeled as a baseline rather than a fabricated multi-month trend. The mechanism is real and will produce an actual trend line across repeated scan cycles.
+
+## Requirements
+
+- Python 3.10+
+- `pandas` (`pip install pandas --break-system-packages`)
+
+## Repository layout expected by the pipeline
+
+```
+security-platform/
+├── module1-cloud-governance/
+│   ├── aws/prowler/compliance/*.csv
+│   └── azure/prowler/compliance/*.csv
+├── module2-automated-compliance/reports/
+│   ├── aws-config-compliance.json
+│   ├── gdpr-compliance-report.md
+│   ├── iso27001-compliance-report.md
+│   └── pci-dss-compliance-report.md
+├── module3-risk-management/output/
+│   ├── top_10_risks.csv
+│   ├── bia_report.csv
+│   └── threat_model_report.csv
+├── module4-architecture-validation/reports/
+│   ├── opa-validation-report.txt
+│   ├── sentinel-validation-report.txt
+│   └── ansible-hardening-report-ec2.txt
+└── module5-iam-governance/
+    ├── credential_report.csv
+    ├── azure_iam_findings.txt
+    └── remediation_report.txt
+```
