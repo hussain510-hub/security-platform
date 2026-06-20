@@ -69,7 +69,7 @@ Example daily cron entry:
 | Trend chart | `trend_history.json` — one point appended automatically per pipeline run |
 | Pipeline provenance | Full list of every source file read during that run, printed at the bottom of the dashboard |
 
-## Scoring formulas (transparent, not hardcoded)
+## Scoring formulas
 
 **SOC2 compliance:**
 ```
